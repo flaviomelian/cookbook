@@ -50,3 +50,36 @@ Proyecto simple para gestionar y compartir recetas entre usuarios, con app móvi
 
 ```bash
 ./mvnw spring-boot:run
+```
+API estará en http://localhost:8080.
+
+Frontend
+Clonar el repositorio y entrar en la carpeta frontend.
+
+Instalar dependencias:
+
+```bash
+npm install
+```
+Ejecutar app Expo:
+
+```bash
+npm start
+```
+Abrir en simulador o dispositivo móvil con Expo Go.
+
+📝 Uso básico
+Registrarse o iniciar sesión.
+
+Crear recetas con título, ingredientes y pasos.
+
+Ver lista de recetas creadas.
+
+Visualizar detalles de cada receta.
+
+🤝 Contribuciones
+PRs y sugerencias son bienvenidas para mejorar funcionalidades o corregir bugs.
+
+📄 Licencia
+MIT License © 2025
+
