@@ -1,5 +1,5 @@
 import NavBar from './Components/NavBar.jsx';
-import Books from './Components/Books.jsx';
+import Books from './Components/Cooks.jsx';
 import { StyleSheet, Text, View } from 'react-native';
 
 export default function App() {
