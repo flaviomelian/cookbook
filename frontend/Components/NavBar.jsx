@@ -2,14 +2,18 @@ import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import home from '../assets/home.png';
 import account from '../assets/account.png';
 import menubook from '../assets/menu_book.png';
+import { useNavigation } from '@react-navigation/native';
 
 const NavBar = () => {
+
+  const navigation = useNavigation();
+
   return (
     <View style={styles.navbar}>
       <TouchableOpacity style={styles.touchable}>
         <Image style={styles.link} source={home}/>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.touchable}>
+      <TouchableOpacity style={styles.touchable} onPress={() => navigation.navigate('Cooks')}>
         <Image style={styles.link} source={menubook}/>
       </TouchableOpacity>
       <TouchableOpacity style={styles.touchable}>

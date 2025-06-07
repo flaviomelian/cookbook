@@ -1,25 +1,41 @@
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
 import NavBar from './Components/NavBar.jsx';
-import Books from './Components/Cooks.jsx';
-import { StyleSheet, Text, View } from 'react-native';
+import CooksScreen from './Components/CooksScreen.jsx';
+import CookDetails from './Components/CookDetails.jsx';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <>
+    <NavigationContainer>
       <View style={styles.container}>
-        <Books/>
-        <NavBar/>
+        {/* Stack Navigator */}
+        <View style={styles.stackContainer}>
+          <Stack.Navigator initialRouteName="Main" screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Cooks" component={CooksScreen} />
+            <Stack.Screen name="CookDetails" component={CookDetails} />
+          </Stack.Navigator>
+        </View>
+
+        {/* NavBar fijo abajo */}
+        <NavBar />
       </View>
-    </>
+    </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%',
-    width: '100%',
     flex: 1,
-    backgroundColor: '#0070C7',
-    alignItems: 'center',
-    justifyContent: 'center',
+  },
+  stackContainer: {
+    backgroundColor: '#008AE1',
+    flex: 1,
+    paddingBottom: 50,
+    paddingTop: 30, 
   },
 });

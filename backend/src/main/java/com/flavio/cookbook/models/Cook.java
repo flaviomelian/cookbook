@@ -24,6 +24,7 @@ public class Cook {
     private String name;
     private String description;
     private String steps;
+    private String ingredients;
     @ManyToMany
     @JoinTable(
         name = "cook_user",
@@ -40,11 +41,12 @@ public class Cook {
     public Cook() {
     }
 
-    public Cook(Long id, String name, String description, String steps) {
+    public Cook(Long id, String name, String description, String steps, String ingredients) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.steps = steps;
+        this.ingredients = ingredients;
     }
 
     // Getters y Setters
@@ -78,5 +80,13 @@ public class Cook {
 
     public void setSteps(String steps) {
         this.steps = steps;
-    }   
+    } 
+    
+    public String getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(String ingredients) {
+        this.ingredients = ingredients;
+    } 
 }
