@@ -1,7 +1,7 @@
 import { React, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { getAllCooks } from '../services/cookService.js';
+import { getAllCooks, deleteCook } from '../services/cookService.js';
 import icon from '../assets/cook.png'; 
 import trash from '../assets/delete.png'; 
 import update from '../assets/edit.png'; 
@@ -23,7 +23,7 @@ const Cooks = () => {
       }
     };
     fetchCooks();
-  }, []);
+  }, [cooks]); 
 
   return (
     <View style={styles.container}>
@@ -37,17 +37,18 @@ const Cooks = () => {
               <TouchableOpacity onPress={() => navigation.navigate('CookDetails', { cook })}>    
                 <Image source={info} />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => console.log('Update Cook', cook.id)}>    
+              <TouchableOpacity onPress={() => navigation.navigate('AddUpdateCook', { cook })}>
                 <Image source={update} />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => console.log('Delete Cook', cook.id)}>    
+              <TouchableOpacity onPress={() => deleteCook(cook.id)}>    
                 <Image source={trash} />
               </TouchableOpacity>
             </View>
           </View>
         ))}
       </ScrollView>
-      <TouchableOpacity style={styles.addCook} onPress={navigator => navigator.navigate('AddCook')}>
+      { /* Aqui añadiria */}
+      <TouchableOpacity style={styles.addCook} onPress={() => navigation.navigate('AddUpdateCook')}>
         <Image source={icon}/>
         <Text style={styles.textButton}>Añadir receta</Text>
       </TouchableOpacity>
