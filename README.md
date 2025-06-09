@@ -1,4 +1,4 @@
-# CookBook- MVP
+# CookBook - MVP
 
 Proyecto simple para gestionar y compartir recetas entre usuarios, con app móvil en React Native y backend en Spring Boot.
 
