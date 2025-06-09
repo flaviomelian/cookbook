@@ -1,17 +1,17 @@
-import { React, useEffect, useState } from 'react';
+import { React, useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { getAllCooks, deleteCook } from '../services/cookService.js';
-import icon from '../assets/cook.png'; 
-import trash from '../assets/delete.png'; 
-import update from '../assets/edit.png'; 
-import info from '../assets/info.png'; 
+import icon from '../assets/cook.png';
+import trash from '../assets/delete.png';
+import update from '../assets/edit.png';
+import info from '../assets/info.png';
 
 const Cooks = () => {
 
   const [cooks, setCooks] = useState([]);
   const navigation = useNavigation();
-
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     const fetchCooks = async () => {
@@ -23,24 +23,31 @@ const Cooks = () => {
       }
     };
     fetchCooks();
-  }, [cooks]); 
+  }, [refresh]);
+
+  // luego en delete:
+  const handleDelete = async (id) => {
+    await deleteCook(id);
+    setRefresh(prev => !prev); // fuerza un cambio para refrescar
+  };
+
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>RECETAS</Text>
-      <ScrollView contentContainerStyle={{ paddingBottom: 20}}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
         {cooks.map((cook, index) => (
           <View style={styles.cook} key={index}>
             <Image source={icon} style={{ marginRight: 10 }} />
             <Text style={styles.listItem}>{cook.name}</Text>
             <View style={styles.actions}>
-              <TouchableOpacity onPress={() => navigation.navigate('CookDetails', { cook })}>    
+              <TouchableOpacity onPress={() => navigation.navigate('CookDetails', { cook })}>
                 <Image source={info} />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => navigation.navigate('AddUpdateCook', { cook })}>
                 <Image source={update} />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => deleteCook(cook.id)}>    
+              <TouchableOpacity onPress={() => handleDelete(cook.id)}>
                 <Image source={trash} />
               </TouchableOpacity>
             </View>
@@ -49,7 +56,7 @@ const Cooks = () => {
       </ScrollView>
       { /* Aqui añadiria */}
       <TouchableOpacity style={styles.addCook} onPress={() => navigation.navigate('AddUpdateCook')}>
-        <Image source={icon}/>
+        <Image source={icon} />
         <Text style={styles.textButton}>Añadir receta</Text>
       </TouchableOpacity>
     </View>
@@ -92,7 +99,7 @@ const styles = StyleSheet.create({
   },
   addCook: {
     flexDirection: 'row',
-    alignItems: 'center', 
+    alignItems: 'center',
     justifyContent: 'center',
     marginTop: 10,
     backgroundColor: '#000f5f',

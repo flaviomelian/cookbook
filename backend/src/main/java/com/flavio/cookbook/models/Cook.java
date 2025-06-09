@@ -9,7 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 
@@ -32,10 +31,6 @@ public class Cook {
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private Set<User> users = new HashSet<>();
-
-    @ManyToOne
-    @JoinColumn(name = "category_id")  
-    private Category category;
 
     // Constructor
     public Cook() {

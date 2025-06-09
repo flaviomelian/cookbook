@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { ScrollView, View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native'
 import { Picker } from '@react-native-picker/picker'
 import { postCook, updateCook } from '../services/cookService.js'
-import { getAllCategories, postCategory } from '../services/categoriesService.js'
 
 const AddUpdateCook = ({ route, navigation }) => {
 
@@ -14,10 +13,7 @@ const AddUpdateCook = ({ route, navigation }) => {
     const [numOfIngredients, setNumOfIngredients] = useState('')
     const [steps, setSteps] = useState([])
     const [ingredients, setIngredients] = useState([])
-    const [categories, setCategories] = useState([])
     const [selectedCategory, setSelectedCategory] = useState('')
-    const [newCategoryName, setNewCategoryName] = useState('')
-    const [showCategoryForm, setShowCategoryForm] = useState(false)
 
     useEffect(() => {
         // Si hay cook (modo edición), inicializa los estados con sus valores
@@ -31,18 +27,6 @@ const AddUpdateCook = ({ route, navigation }) => {
             setNumOfIngredients(cook.ingredients ? cook.ingredients.split('|').length : 0)
         }
     }, [cook])
-
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const data = await getAllCategories()
-                setCategories(data)
-            } catch (error) {
-                console.error('Error fetching categories:', error)
-            }
-        }
-        fetchCategories()
-    }, [categories])
 
     const managePostCook = async () => {
         const cookData = {
@@ -63,7 +47,7 @@ const AddUpdateCook = ({ route, navigation }) => {
                 alert('Receta creada con éxito')
                 // Resetear formulario si quieres
             }
-            navigation.goBack()
+            navigation.navigate('Cooks')
         } catch (error) {
             alert('Error creando receta')
             console.error(error)
@@ -133,68 +117,6 @@ const AddUpdateCook = ({ route, navigation }) => {
                         </>
                     )}
 
-                </View>
-                <View style={styles.hr} />
-                <View style={{ marginBottom: 20 }}>
-                    <Text style={styles.header}>Categoría:</Text>
-                    <Picker
-                        selectedValue={selectedCategory}
-                        onValueChange={(itemValue) => {
-                            if (itemValue === 'create') {
-                                setShowCategoryForm(true);
-                                // opcional: resetear selectedCategory para que no se quede seleccionado "crear"
-                                setSelectedCategory('');
-                            } else {
-                                setShowCategoryForm(false);
-                                setSelectedCategory(itemValue);
-                            }
-                        }}
-                        style={{ height: 55, width: '90%', alignSelf: 'center' }}
-                    >
-                        <Picker.Item label="Selecciona una categoría" value='' />
-                        {categories.map((category, index) => {
-                            return <Picker.Item key={index} label={category.name} value={category.name} />
-                        })}
-                        <Picker.Item label="Crear una categoría" value={"create"} />
-                    </Picker>
-                    {showCategoryForm && (
-                        <View >
-                            <TextInput
-                                placeholder="Nombre nueva categoría"
-                                value={newCategoryName}
-                                onChangeText={setNewCategoryName}
-                                style={styles.input}
-                            />
-                            <TouchableOpacity
-                                style={[styles.button, { backgroundColor: '#0055cc' }]}
-                                onPress={async () => {
-                                    if (newCategoryName.trim() === '') return alert('El nombre no puede estar vacío')
-                                    try {
-                                        await postCategory({ name: newCategoryName }) // función para crear categoría en backend
-                                        setNewCategoryName('')
-                                        setShowCategoryForm(false)
-                                        // Actualiza la lista de categorías recargando
-                                        const data = await getAllCategories()
-                                        setCategories(data)
-                                    } catch (e) {
-                                        alert('Error creando categoría')
-                                        console.error(e)
-                                    }
-                                }}
-                            >
-                                <Text style={{ color: 'white', textAlign: 'center' }}>Guardar categoría</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[styles.button, { backgroundColor: '#af0000', marginTop: 5 }]}
-                                onPress={() => setShowCategoryForm(false)}
-                            >
-                                <Text style={{ color: 'white', textAlign: 'center' }} onPress={() => {
-                                    setShowCategoryForm(false)
-                                    setSelectedCategory('')
-                                }}>Cancelar</Text>
-                            </TouchableOpacity>
-                        </View>
-                    )}
                 </View>
                 {(cookName.trim() !== '' &&
                     description.trim() !== '' &&
