@@ -39,7 +39,7 @@ public class CookController {
     @PutMapping("/{id}")
     public void updateCook(@PathVariable Long id, @RequestBody Cook Cook) {
         if (cookService.getCookById(id).isPresent())
-            cookService.updateCook(Cook);
+            cookService.updateCook(id, Cook);
     }
 
     @DeleteMapping("/{id}")

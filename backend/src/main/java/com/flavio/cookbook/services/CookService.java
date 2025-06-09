@@ -1,4 +1,5 @@
 package com.flavio.cookbook.services;
+
 import org.springframework.stereotype.Service;
 import com.flavio.cookbook.repositories.CookRepository;
 import com.flavio.cookbook.models.Cook;
@@ -10,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class CookService {
-    
+
     @Autowired
     private CookRepository cookRepository;
 
@@ -30,8 +31,16 @@ public class CookService {
         cookRepository.deleteById(id);
     }
 
-    public void updateCook(Cook cook) {
-        cookRepository.save(cook);
+    public void updateCook(Long id, Cook cook) {
+        Optional<Cook> cookUpdate = cookRepository.findById(id);
+        if (cookUpdate.isPresent()){
+            Cook cookSave = cookUpdate.get();
+            cookSave.setName(cook.getName());
+            cookSave.setDescription(cook.getDescription());
+            cookSave.setSteps(cook.getSteps());
+            cookSave.setIngredients(cook.getIngredients());
+            cookRepository.save(cookSave);
+        }
     }
 
 }
