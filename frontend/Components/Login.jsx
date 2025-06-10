@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import account from '../assets/account.png';
 import lock from '../assets/lock.png';
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const navigation = useNavigation();
 
     const handleLogin = () => {
         // Aquí iría la lógica de login
@@ -18,7 +20,7 @@ const Login = () => {
                 <Text style={styles.title}>Iniciar Sesión</Text>
                 <View style={styles.inputs}>
                     <View style={styles.inputImage}>
-                        <Image style={{ width: 35, height: 40, marginRight: 10 }} source={account} />
+                        <Image style={{ width: 30, height: 35, marginRight: 10 }} source={account} />
                         <TextInput
                             style={[styles.input, { flex: 1 }]}
                             placeholder="Usuario"
@@ -29,7 +31,7 @@ const Login = () => {
                         />
                     </View>
                     <View style={styles.inputImage}>
-                        <Image style={{ width: 30, height: 40, marginRight: 10, marginLeft: 3 }} source={lock} />
+                        <Image style={{ width: 25, height: 30, marginRight: 10, marginLeft: 3 }} source={lock} />
                         <TextInput
                             style={styles.input}
                             placeholder="Contraseña"
@@ -45,7 +47,7 @@ const Login = () => {
                         <Text style={styles.textButton}>Iniciar Sesión</Text>
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity onPress={() => {/* navegar a signup */ }} style={{ alignItems: 'center', marginTop: 10 }}>
+                <TouchableOpacity onPress={() => navigation.navigate('Signup')} style={{ alignItems: 'center', marginTop: 10 }}>
                     <Text style={{ color: '#70a1ff' }}>
                         ¿No tienes cuenta? <Text style={{ fontWeight: 'bold', color: '#000166' }}>Regístrate</Text>
                     </Text>
@@ -89,13 +91,19 @@ const styles = StyleSheet.create({
         margin: 9,
     },
     inputs: {
-        marginLeft: 30,
+        paddingLeft: 30,
+        paddingTop: 10,
         marginTop: 10,
+        backgroundColor: '#000166',
+        borderRadius: 10
     },
     inputImage: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 15
+        marginBottom: 20,
+    },
+    input:{
+        color: '#0070f0',
     }
 })
 
