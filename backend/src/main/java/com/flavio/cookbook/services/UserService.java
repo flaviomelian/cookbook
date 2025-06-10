@@ -21,15 +21,19 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public Optional<User> getuserById(Long id) {
+    public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
 
-    public void deleteuser(Long id) {
+    public Optional<User> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
 
-    public void updateuser(User user) {
+    public void updateUser(User user) {
         userRepository.save(user);
     }
 

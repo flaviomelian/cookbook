@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import com.flavio.cookbook.models.User;
 import com.flavio.cookbook.services.UserService;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:5173")
@@ -26,30 +27,41 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Optional<User>> getuserById(@PathVariable Long id) {
-        Optional<User> user = userService.getuserById(id);
+        Optional<User> user = userService.getUserById(id);
         return user.isPresent() ? ResponseEntity.ok(user) : ResponseEntity.status(HttpStatus.NOT_FOUND).body(user);
     }
 
-    @PostMapping("/")
-    public ResponseEntity<User> createuser(@RequestBody User user) {
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestBody User user) {
+        if (userService.getUserByEmail(user.getEmail()) != null) 
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("El usuario ya existe");
+
+        
+        User savedUser = userService.saveUser(user);
+
+        Map<String, String> response = Map.of("email", savedUser.getEmail());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<User> login(@RequestBody User user) {
         User saveduser = userService.saveUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(saveduser);
     }
 
     @PutMapping("/{id}")
     public void updateuser(@PathVariable Long id, @RequestBody User user) {
-        if (userService.getuserById(id).isPresent())
-            userService.updateuser(user);
+        if (userService.getUserById(id).isPresent())
+            userService.updateUser(user);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteuser(@PathVariable Long id) {
-        if (userService.getuserById(id).isPresent()) {
-            userService.deleteuser(id);
-            return ResponseEntity.ok("Receta eliminada correctamente.");
+        if (userService.getUserById(id).isPresent()) {
+            userService.deleteUser(id);
+            return ResponseEntity.ok("Usuario eliminado correctamente.");
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Receta no encontrada.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrada.");
         }
     }
 }
-

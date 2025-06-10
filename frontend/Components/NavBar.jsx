@@ -42,7 +42,7 @@ const NavBar = () => {
         setActiveButton1(false)
         setActiveButton2(false)
         setActiveButton3(true)
-        navigation.navigate('Cooks')}}>
+        navigation.navigate('Login')}}>
         <Image style={styles.link} source={account} />
       </Pressable>
     </View>

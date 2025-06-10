@@ -8,6 +8,8 @@ import MainScreen from './Components/MainScreen.jsx';
 import CooksScreen from './Components/CooksScreen.jsx';
 import CookDetails from './Components/CookDetails.jsx';
 import AddUpdateCook from './Components/AddUpdateCook.jsx';
+import Login from './Components/Login.jsx';
+import Signup from './Components/Signup.jsx';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +24,8 @@ export default function App() {
             <Stack.Screen name="Cooks" component={CooksScreen} />
             <Stack.Screen name="CookDetails" component={CookDetails} />
             <Stack.Screen name="AddUpdateCook" component={AddUpdateCook} />
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Signup" component={Signup} />
           </Stack.Navigator>
         </View>
 

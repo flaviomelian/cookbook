@@ -11,12 +11,13 @@ const Cooks = () => {
 
   const [cooks, setCooks] = useState([]);
   const navigation = useNavigation();
-  const [refresh, setRefresh] = useState(false);
+  const [refresh, setRefresh] = useState(true);
 
   useEffect(() => {
     const fetchCooks = async () => {
       try {
         const data = await getAllCooks();
+        console.log('Data recibida:', data);
         setCooks(data);
       } catch (error) {
         console.error('Error fetching cooks:', error);
