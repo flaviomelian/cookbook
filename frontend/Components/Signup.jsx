@@ -3,7 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'reac
 import { useNavigation } from '@react-navigation/native';
 import account from '../assets/account.png';
 import lock from '../assets/lock.png';
-import emailIcon from '../assets/email.png'; // asegúrate de tener este ícono
+import emailIcon from '../assets/email.png';
+import { signup } from '../services/userService';
 
 const Signup = () => {
     const [name, setName] = useState('');
@@ -12,8 +13,7 @@ const Signup = () => {
     const navigation = useNavigation();
 
     const handleSignup = () => {
-        // Aquí iría la lógica de registro
-        console.log('Signup:', name, email, password);
+        signup(name, email, password);
     };
 
     return (

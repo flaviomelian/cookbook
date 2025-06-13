@@ -4,6 +4,7 @@ import home from '../assets/home.png';
 import account from '../assets/account.png';
 import dashboard from '../assets/dashboard.png';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const NavBar = () => {
 
@@ -12,37 +13,69 @@ const NavBar = () => {
   const [activeButton2, setActiveButton2] = useState(false);
   const [activeButton3, setActiveButton3] = useState(false);
 
+  const handleHomePress = async () => {
+    setActiveButton1(true);
+    setActiveButton2(false);
+    setActiveButton3(false);
+
+    const token = await AsyncStorage.getItem('token');
+    if (!token) navigation.navigate('Home');
+    else navigation.navigate('Feed');
+  };
+  
+  const handleDashboardPress = async () => {
+    setActiveButton1(false);
+    setActiveButton2(true);
+    setActiveButton3(false);
+
+    const token = await AsyncStorage.getItem('token');
+    if (!token) navigation.navigate('Cooks');
+    else navigation.navigate('Main');
+  };
+
+  const handleProfilePress = async () => {
+    setActiveButton1(false);
+    setActiveButton2(false);
+    setActiveButton3(true);
+
+    const token = await AsyncStorage.getItem('token');
+    if (!token) navigation.navigate('Login');
+    else navigation.navigate('Profile');
+  };
+
   return (
     <View style={styles.navbar}>
       <Pressable style={() => [
         styles.touchable,
         activeButton1 && styles.buttonPressed
-      ]} onPress={() => { 
+      ]} onPress={() => {
         setActiveButton1(true)
         setActiveButton2(false)
         setActiveButton3(false)
-        navigation.navigate('Home')
-        }}>
+        handleHomePress()
+      }}>
         <Image style={styles.link} source={home} />
       </Pressable>
       <Pressable style={() => [
         styles.touchable,
         activeButton2 && styles.buttonPressed
-      ]} onPress={() => { 
+      ]} onPress={() => {
         setActiveButton1(false)
         setActiveButton2(true)
         setActiveButton3(false)
-        navigation.navigate('Main')}}>
+        handleDashboardPress()
+      }}>
         <Image style={styles.link} source={dashboard} />
       </Pressable>
       <Pressable style={() => [
         styles.touchable,
         activeButton3 && styles.buttonPressed
-      ]} onPress={() => { 
+      ]} onPress={() => {
         setActiveButton1(false)
         setActiveButton2(false)
         setActiveButton3(true)
-        navigation.navigate('Profile')}}>
+        handleProfilePress()
+      }}>
         <Image style={styles.link} source={account} />
       </Pressable>
     </View>

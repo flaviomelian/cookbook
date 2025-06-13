@@ -22,7 +22,8 @@ export default function App() {
         {/* Stack Navigator */}
         <View style={styles.stackContainer}>
           <Stack.Navigator initialRouteName="Main" screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Home" component={Feed} />
+            <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="Feed" component={Feed} />
             <Stack.Screen name="Main" component={MainMenu} />
             <Stack.Screen name="Cooks" component={CooksScreen} />
             <Stack.Screen name="CookDetails" component={CookDetails} />
