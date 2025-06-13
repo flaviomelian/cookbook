@@ -1,4 +1,3 @@
-import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import Cooks from './Cooks.jsx'; // Assuming Cooks.jsx is the component that displays the Cooks
 

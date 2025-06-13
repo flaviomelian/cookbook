@@ -1,4 +1,4 @@
-import { React, useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { getAllCooks, deleteCook, getCooksFromUser } from '../services/cookService.js';
