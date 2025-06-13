@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
 import icon from '../assets/cook.png';
 import description from '../assets/description.png';
 import grocery from '../assets/grocery.png';
@@ -14,7 +14,7 @@ const CookDetails = ({ route }) => {
                     <Image source={icon} style={{ marginRight: 10 }} />
                     <View style={styles.titleRate}>
                         <Text style={styles.title}>{cook.name}</Text>
-                        <StarRating rating={cook.rating}/>
+                        <StarRating rating={cook.rating} />
                     </View>
                 </View>
                 <View style={styles.section}>
@@ -43,6 +43,9 @@ const CookDetails = ({ route }) => {
                         <Text key={index} style={styles.text}>- {step}</Text>
                     ))}
                 </View>
+                <TouchableOpacity style={styles.favourite} onPress={() => navigation.navigate('AddUpdateCook')}>
+                    <Text style={styles.textButton}><Text style={styles.star}>★</Text>Marcar como favorita</Text>
+                </TouchableOpacity>
             </ScrollView>
         </View>
 
@@ -83,6 +86,22 @@ const styles = StyleSheet.create({
         backgroundColor: '#003f8e',
         padding: 10,
         borderRadius: 5,
+    },
+    favourite:{
+        width: 200,
+        backgroundColor: '#003f8e',
+        borderRadius: 10,
+        marginLeft: 75
+    },
+    textButton:{
+        color: 'white',
+        marginBottom: 10,
+        marginLeft: 10
+    },
+    star: {
+        fontSize: 24,
+        color: '#d6d15a', 
+        marginHorizontal: 2,
     },
 });
 
