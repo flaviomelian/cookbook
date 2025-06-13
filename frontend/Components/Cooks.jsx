@@ -16,7 +16,6 @@ const Cooks = ({ userId }) => {
   useEffect(() => {
     const fetchCooks = async () => {
       try {
-        console.log(`NO VOY A BUSCAR LAS DE ESTE ID ${userId}`)
         const data = userId ? await getCooksFromUser(userId) : await getAllCooks();
         setCooks(data);
       } catch (error) {
@@ -25,7 +24,7 @@ const Cooks = ({ userId }) => {
     };
     fetchCooks();
   }, [refresh]);
-  
+
   const handleDelete = async (id) => {
     await deleteCook(id);
     setRefresh(prev => !prev); // fuerza un cambio para refrescar
@@ -34,25 +33,32 @@ const Cooks = ({ userId }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>RECETAS</Text>
+      {userId ? (<Text style={styles.title}>MIS RECETAS</Text>) : (<Text style={styles.title}>RECETAS DE LA COMUNIDAD</Text>)}
       <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
         {cooks.map((cook, index) => (
           <View style={styles.cook} key={index}>
-            <Image source={icon} style={{ marginRight: 10 }} />
-            <Text style={styles.listItem}>{cook.name}</Text>
-            <View style={styles.actions}>
-              <TouchableOpacity onPress={() => navigation.navigate('CookDetails', { cook })}>
-                <Image source={info} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => navigation.navigate('AddUpdateCook', { cook })}>
-                <Image source={update} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleDelete(cook.id)}>
-                <Image source={trash} />
-              </TouchableOpacity>
-            </View>
-          </View>
-        ))}
+            {userId ? (<Image source={icon} style={{ marginRight: 10 }} />) : (<Image source={icon} style={{ marginLeft: 20, marginRight: 10 }} />)}
+            {userId ? (<Text style={styles.listItem}>{cook.name}</Text>):(<Text style={[styles.listItem, { marginLeft: 25 }]}>{cook.name}</Text>)}
+            {userId ? (
+              <View style={styles.actions}>
+                <TouchableOpacity onPress={() => navigation.navigate('CookDetails', { cook })}>
+                  <Image source={info} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('AddUpdateCook', { cook })}>
+                  <Image source={update} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => handleDelete(cook.id)}>
+                  <Image source={trash} />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View style={styles.actions}>
+                <TouchableOpacity onPress={() => navigation.navigate('CookDetails', { cook })}>
+                  {userId ? (<Image source={info} style={{ marginRight: 10 }} />) : (<Image source={info} style={{ marginLeft: 20 }} />)}
+                </TouchableOpacity>
+              </View>)}
+          </View>)
+        )}
       </ScrollView>
       { /* Aqui añadiria */}
       <TouchableOpacity style={styles.addCook} onPress={() => navigation.navigate('AddUpdateCook')}>
@@ -71,7 +77,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: 23,
     fontWeight: 'bold',
     color: '#0070f0',
     textAlign: 'center',
@@ -83,6 +89,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#000166',
     marginVertical: 10,
+    marginLeft: 5,
   },
   cook: {
     flexDirection: 'row',
