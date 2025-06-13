@@ -15,8 +15,6 @@ public class User {
     private String name;
     private String email;
     private String password;
-
-    private String avatarUrl;
     private String bio;
     private String location;
     private String language;
@@ -74,14 +72,6 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getAvatarUrl() {
-        return avatarUrl;
-    }
-
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
     }
 
     public String getBio() {
