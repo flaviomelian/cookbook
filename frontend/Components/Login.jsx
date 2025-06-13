@@ -3,15 +3,20 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'reac
 import { useNavigation } from '@react-navigation/native';
 import account from '../assets/account.png';
 import lock from '../assets/lock.png';
+import visible from '../assets/visibility_on.png';
+import notVisible from '../assets/visibility_off.png';
+import { login } from '../services/userService';
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [isPasswordVisible, setPasswordVisible] = useState(false);
     const navigation = useNavigation();
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         // Aquí iría la lógica de login
         console.log('Login:', username, password);
+        await login(username, password)
     };
 
     return (
@@ -38,8 +43,14 @@ const Login = () => {
                             placeholderTextColor="#a0a8d0"
                             value={password}
                             onChangeText={setPassword}
-                            secureTextEntry
+                            secureTextEntry={!isPasswordVisible}
                         />
+                        <TouchableOpacity
+                            onPress={() => setPasswordVisible(!isPasswordVisible)}
+                            style={styles.toggleButton}
+                        >
+                            {isPasswordVisible ? <Image style={styles.visibility} source={visible}/> : <Image style={styles.visibility} source={notVisible}/>}
+                        </TouchableOpacity>
                     </View>
                 </View>
                 <View>
@@ -101,9 +112,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 20,
+        position: 'relative',
     },
-    input:{
+    input: {
         color: '#0070f0',
+        paddingRight: 20,
+        width: '70%'
+    }, 
+    visibility: {
+        position: 'absolute',
+        bottom: -15,
+        left: -10
     }
 })
 

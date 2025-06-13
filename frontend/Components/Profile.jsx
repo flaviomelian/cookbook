@@ -2,20 +2,42 @@ import { useEffect, useState } from 'react'
 import { getUser } from '../services/userService'
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Profile = () => {
 
     const navigation = useNavigation();
     const [dataUser, setDataUser] = useState([])
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    useEffect(() => {
+        const checkAuth = async () => {
+            const token = await AsyncStorage.getItem('token');
+
+            if (!token) {
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Login' }],
+                });
+            } else {
+                setIsAuthenticated(true);
+            }
+        };
+
+        checkAuth();
+    }, []);
 
     useEffect(() => {
         const fetchDataUser = async () => {
             const data = await getUser(1);
-            setDataUser(data)
-            console.log(data)
+            setDataUser(data);
+        };
+
+        if (isAuthenticated) {
+            fetchDataUser();
         }
-        fetchDataUser()
-    }, [])
+    }, [isAuthenticated]);
+
 
     const renderData = (data, prefix = '') => {
         return Object.entries(data).map(([key, value]) => {

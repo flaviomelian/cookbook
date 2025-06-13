@@ -2,9 +2,15 @@ package com.flavio.cookbook.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import com.flavio.cookbook.components.JwtUtil;
 import com.flavio.cookbook.models.User;
+import com.flavio.cookbook.repositories.UserRepository;
 import com.flavio.cookbook.services.UserService;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,9 +21,13 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping("/")
@@ -33,20 +43,27 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody User user) {
-        if (userService.getUserByEmail(user.getEmail()) != null) 
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("El usuario ya existe");
+        Optional<User> existing = userService.getUserByEmail(user.getEmail());
+        if (existing.isPresent()) return ResponseEntity.status(HttpStatus.CONFLICT).body("El usuario ya existe");
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
 
-        
-        User savedUser = userService.saveUser(user);
+        userService.saveUser(user);
+        String token = jwtUtil.generateToken(user.getEmail());
 
-        Map<String, String> response = Map.of("email", savedUser.getEmail());
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.ok(Map.of("token", token));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody User user) {
-        User saveduser = userService.saveUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saveduser);
+    public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
+        String email = credentials.get("email");
+        String password = credentials.get("password");
+        Optional<User> userOpt = userService.getUserByEmail(email);
+        if (userOpt.isEmpty() || !passwordEncoder.matches(password, userOpt.get().getPassword())) 
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email or password is incorrect");
+        String token = jwtUtil.generateToken(email);
+        return ResponseEntity.ok(Map.of("token", token));
     }
 
     @PutMapping("/{id}")

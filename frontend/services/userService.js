@@ -4,3 +4,9 @@ export const getUser = async (id) => {
     const { data } = await api.get(`users/${id}`); // Realiza la solicitud GET a la API para obtener los usuarios.
     return data; // Devuelve los datos obtenidos de la API.
 }
+
+export const login = async (email, password) => {
+    const {data} = api.post(`users/login`, { email, password });
+    console.log("response", data);
+    return data 
+}
