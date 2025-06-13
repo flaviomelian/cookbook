@@ -47,4 +47,9 @@ public class CookService {
         return cookRepository.findByUser_Id(id);
     }
 
+    public List<Cook> getCooksSortByRate(boolean down) {
+        if (down) return cookRepository.findAllOrderByRatingDesc();
+        return cookRepository.findAllOrderByRatingAsc();
+    }
+
 }

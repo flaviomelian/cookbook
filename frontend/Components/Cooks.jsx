@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { getAllCooks, deleteCook, getCooksFromUser } from '../services/cookService.js';
+import { useNavigation } from '@react-navigation/native';
+import { getAllCooks, deleteCook, getCooksFromUser, getCooksSortByRate } from '../services/cookService.js';
 import icon from '../assets/cook.png';
 import trash from '../assets/delete.png';
+import upward from '../assets/arrow_upward.png';
+import downward from '../assets/arrow_downward.png';
+import rate from '../assets/rate.png'
 import update from '../assets/edit.png';
 import info from '../assets/info.png';
 
@@ -12,18 +15,24 @@ const Cooks = ({ userId }) => {
   const [cooks, setCooks] = useState([]);
   const navigation = useNavigation();
   const [refresh, setRefresh] = useState(true);
+  const [down, setDown] = useState(null);
 
   useEffect(() => {
     const fetchCooks = async () => {
       try {
-        const data = userId ? await getCooksFromUser(userId) : await getAllCooks();
+        let data;
+        if (down !== null) data = await getCooksSortByRate(down);
+        else if (userId) data = await getCooksFromUser(userId);
+        else data = await getAllCooks();
         setCooks(data);
       } catch (error) {
         console.error('Error fetching cooks:', error);
       }
     };
+
     fetchCooks();
-  }, [refresh]);
+  }, [refresh, userId, down]);
+
 
   const handleDelete = async (id) => {
     await deleteCook(id);
@@ -34,11 +43,23 @@ const Cooks = ({ userId }) => {
   return (
     <View style={styles.container}>
       {userId ? (<Text style={styles.title}>MIS RECETAS</Text>) : (<Text style={styles.title}>RECETAS DE LA COMUNIDAD</Text>)}
+      <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginBottom: 20 }}>
+        <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => setDown(false)}>
+          <Image source={rate} />
+          <Image source={upward} />
+          <Text style={styles.rating}>baja → alta</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => setDown(true)}>
+          <Image source={rate} />
+          <Image source={downward} />
+          <Text style={styles.rating}>alta → baja</Text>
+        </TouchableOpacity>
+      </View>
       <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
         {cooks.map((cook, index) => (
           <View style={styles.cook} key={index}>
             {userId ? (<Image source={icon} style={{ marginRight: 10 }} />) : (<Image source={icon} style={{ marginLeft: 20, marginRight: 10 }} />)}
-            {userId ? (<Text style={styles.listItem}>{cook.name}</Text>):(<Text style={[styles.listItem, { marginLeft: 25 }]}>{cook.name}</Text>)}
+            {userId ? (<Text style={styles.listItem}>{cook.name}</Text>) : (<Text style={[styles.listItem, { marginLeft: 25 }]}>{cook.name}</Text>)}
             {userId ? (
               <View style={styles.actions}>
                 <TouchableOpacity onPress={() => navigation.navigate('CookDetails', { cook })}>
@@ -79,6 +100,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 23,
+    fontWeight: 'bold',
+    color: '#0070f0',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  rating: {
+    fontSize: 15,
     fontWeight: 'bold',
     color: '#0070f0',
     textAlign: 'center',

@@ -35,6 +35,11 @@ public class CookController {
         return cookService.getAllCooksFromUser(id);
     }
 
+    @GetMapping("/sort/{down}")
+    public List<Cook> getCooksSortByRate(@PathVariable boolean down) {
+        return cookService.getCooksSortByRate(down);
+    }
+
     @PostMapping("/")
     public ResponseEntity<Cook> createCook(@RequestBody Cook Cook) {
         Cook savedCook = cookService.saveCook(Cook);

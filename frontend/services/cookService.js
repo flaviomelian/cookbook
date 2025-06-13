@@ -5,6 +5,11 @@ export const getAllCooks = async () => {
   return data; // Devuelve los datos obtenidos de la API.
 }
 
+export const getCooksSortByRate = async (down) => {
+  const { data } = await api.get(`cooks/sort/${down}`); // Realiza la solicitud GET a la API para obtener los usuarios.
+  return data; // Devuelve los datos obtenidos de la API.
+}
+
 export const postCook = async (cook) => {
   const response = await api.post('cooks/', cook);
   return response.status;  // devuelve el código HTTP (por ejemplo, 201, 200, 400, etc)

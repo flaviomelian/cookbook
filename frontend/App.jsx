@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import NavBar from './Components/NavBar.jsx';
 import Home from './Components/Home.jsx';
+import Feed from './Components/Feed.jsx';
 import MainMenu from './Components/MainMenu.jsx';
 import CooksScreen from './Components/CooksScreen.jsx';
 import CookDetails from './Components/CookDetails.jsx';
@@ -21,7 +22,7 @@ export default function App() {
         {/* Stack Navigator */}
         <View style={styles.stackContainer}>
           <Stack.Navigator initialRouteName="Main" screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="Home" component={Feed} />
             <Stack.Screen name="Main" component={MainMenu} />
             <Stack.Screen name="Cooks" component={CooksScreen} />
             <Stack.Screen name="CookDetails" component={CookDetails} />
