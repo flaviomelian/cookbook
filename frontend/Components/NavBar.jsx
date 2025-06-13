@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { View, Pressable, StyleSheet, Image } from 'react-native';
 import home from '../assets/home.png';
 import account from '../assets/account.png';
-import menubook from '../assets/menu_book.png';
+import dashboard from '../assets/dashboard.png';
 import { useNavigation } from '@react-navigation/native';
 
 const NavBar = () => {
@@ -21,7 +21,7 @@ const NavBar = () => {
         setActiveButton1(true)
         setActiveButton2(false)
         setActiveButton3(false)
-        navigation.navigate('Main')
+        navigation.navigate('Home')
         }}>
         <Image style={styles.link} source={home} />
       </Pressable>
@@ -32,8 +32,8 @@ const NavBar = () => {
         setActiveButton1(false)
         setActiveButton2(true)
         setActiveButton3(false)
-        navigation.navigate('Cooks')}}>
-        <Image style={styles.link} source={menubook} />
+        navigation.navigate('Main')}}>
+        <Image style={styles.link} source={dashboard} />
       </Pressable>
       <Pressable style={() => [
         styles.touchable,
@@ -42,7 +42,7 @@ const NavBar = () => {
         setActiveButton1(false)
         setActiveButton2(false)
         setActiveButton3(true)
-        navigation.navigate('Login')}}>
+        navigation.navigate('Profile')}}>
         <Image style={styles.link} source={account} />
       </Pressable>
     </View>

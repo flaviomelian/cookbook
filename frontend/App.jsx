@@ -4,12 +4,14 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import NavBar from './Components/NavBar.jsx';
-import MainScreen from './Components/MainScreen.jsx';
+import Home from './Components/Home.jsx';
+import MainMenu from './Components/MainMenu.jsx';
 import CooksScreen from './Components/CooksScreen.jsx';
 import CookDetails from './Components/CookDetails.jsx';
 import AddUpdateCook from './Components/AddUpdateCook.jsx';
 import Login from './Components/Login.jsx';
 import Signup from './Components/Signup.jsx';
+import Profile from './Components/Profile.jsx';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,12 +22,14 @@ export default function App() {
         {/* Stack Navigator */}
         <View style={styles.stackContainer}>
           <Stack.Navigator initialRouteName="Main" screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Main" component={MainScreen} />
+            <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="Main" component={MainMenu} />
             <Stack.Screen name="Cooks" component={CooksScreen} />
             <Stack.Screen name="CookDetails" component={CookDetails} />
             <Stack.Screen name="AddUpdateCook" component={AddUpdateCook} />
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Signup" component={Signup} />
+            <Stack.Screen name="Profile" component={Profile} />
           </Stack.Navigator>
         </View>
 

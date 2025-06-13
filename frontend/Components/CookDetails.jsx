@@ -1,19 +1,21 @@
-// Components/CookDetails.jsx
-import React from 'react';
 import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
 import icon from '../assets/cook.png';
 import description from '../assets/description.png';
 import grocery from '../assets/grocery.png';
+import StarRating from './StarRating';
 
 const CookDetails = ({ route }) => {
     const { cook } = route.params;
 
     return (
-        <View style={{width: '100%', flex: 1, backgroundColor: '#003f8e'}}>
+        <View style={{ width: '100%', flex: 1, backgroundColor: '#003f8e' }}>
             <ScrollView contentContainerStyle={styles.container}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20, backgroundColor: '#003f8e', padding: 10, borderRadius: 5, }}>
                     <Image source={icon} style={{ marginRight: 10 }} />
-                    <Text style={styles.title}>{cook.name}</Text>
+                    <View style={styles.titleRate}>
+                        <Text style={styles.title}>{cook.name}</Text>
+                        <StarRating rating={cook.rating}/>
+                    </View>
                 </View>
                 <View style={styles.section}>
                     <View style={{ flexDirection: 'row' }} >
@@ -54,6 +56,11 @@ const styles = StyleSheet.create({
         paddingTop: 80,
         paddingBottom: 110,
         backgroundColor: '#008AE1',
+    },
+    titleRate: {
+        flex: 1,
+        direction: 'row',
+        justifyContent: 'center'
     },
     title: {
         fontSize: 24,

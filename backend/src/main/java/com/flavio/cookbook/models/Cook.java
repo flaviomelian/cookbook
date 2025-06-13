@@ -1,16 +1,12 @@
 package com.flavio.cookbook.models;
-import java.util.HashSet;
-import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-
 
 @Entity
 @Table(name = "cooks")
@@ -20,28 +16,24 @@ public class Cook {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private String description;
-    private String steps;
-    private String ingredients;
-    @ManyToMany
-    @JoinTable(
-        name = "cook_user",
-        joinColumns = @JoinColumn(name = "cook_id"),
-        inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private Set<User> users = new HashSet<>();
+    private String name, description, steps, ingredients;
+    private double rating;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     // Constructor
     public Cook() {
     }
 
-    public Cook(Long id, String name, String description, String steps, String ingredients) {
+    public Cook(Long id, String name, String description, String steps, String ingredients, double rating) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.steps = steps;
         this.ingredients = ingredients;
+        this.rating = rating;
     }
 
     // Getters y Setters
@@ -68,20 +60,28 @@ public class Cook {
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     public String getSteps() {
         return steps;
     }
 
     public void setSteps(String steps) {
         this.steps = steps;
-    } 
-    
+    }
+
     public String getIngredients() {
         return ingredients;
     }
 
     public void setIngredients(String ingredients) {
         this.ingredients = ingredients;
-    } 
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
 }

@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Image } fr
 import { useNavigation } from '@react-navigation/native';
 import icon from '../assets/cook.png';
 
-const MainScreen = () => {
+const Home = () => {
 
     const navigation = useNavigation();
     return (
@@ -97,4 +97,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default MainScreen;
+export default Home;

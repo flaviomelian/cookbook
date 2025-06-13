@@ -1,23 +1,49 @@
 package com.flavio.cookbook.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.List;
 
-// Clase que representa cualquier forma geométrica
-@Entity 
+@Entity
 @Table(name = "users")
 public class User {
-    
-    // Atributos
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name, email, password;
 
-    // Getters and Setters
+    private String name;
+    private String email;
+    private String password;
+
+    private String avatarUrl;
+    private String bio;
+    private String location;
+    private String language;
+
+    private boolean isActive = true;
+
+    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    // Relaciones
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Cook> cooks;
+
+    @ManyToMany
+    @JoinTable(
+        name = "user_favorites",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "cook_id")
+    )
+    private List<Cook> favorites;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
+
+    private Role role;
+
     public Long getId() {
         return id;
     }
@@ -49,5 +75,99 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public List<Cook> getCooks() {
+        return cooks;
+    }
+
+    public void setCooks(List<Cook> cooks) {
+        this.cooks = cooks;
+    }
+
+    public List<Cook> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(List<Cook> favorites) {
+        this.favorites = favorites;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    
 }
 
+enum Role {
+    ADMIN,
+    USUARIO
+}

@@ -17,7 +17,6 @@ const Cooks = () => {
     const fetchCooks = async () => {
       try {
         const data = await getAllCooks();
-        console.log('Data recibida:', data);
         setCooks(data);
       } catch (error) {
         console.error('Error fetching cooks:', error);
