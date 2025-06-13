@@ -1,13 +1,13 @@
 import { React, useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { getAllCooks, deleteCook } from '../services/cookService.js';
+import { getAllCooks, deleteCook, getCooksFromUser } from '../services/cookService.js';
 import icon from '../assets/cook.png';
 import trash from '../assets/delete.png';
 import update from '../assets/edit.png';
 import info from '../assets/info.png';
 
-const Cooks = () => {
+const Cooks = ({ userId }) => {
 
   const [cooks, setCooks] = useState([]);
   const navigation = useNavigation();
@@ -16,7 +16,8 @@ const Cooks = () => {
   useEffect(() => {
     const fetchCooks = async () => {
       try {
-        const data = await getAllCooks();
+        console.log(`NO VOY A BUSCAR LAS DE ESTE ID ${userId}`)
+        const data = userId ? await getCooksFromUser(userId) : await getAllCooks();
         setCooks(data);
       } catch (error) {
         console.error('Error fetching cooks:', error);
@@ -24,8 +25,7 @@ const Cooks = () => {
     };
     fetchCooks();
   }, [refresh]);
-
-  // luego en delete:
+  
   const handleDelete = async (id) => {
     await deleteCook(id);
     setRefresh(prev => !prev); // fuerza un cambio para refrescar

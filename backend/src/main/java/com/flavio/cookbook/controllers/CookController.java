@@ -30,6 +30,11 @@ public class CookController {
         return Cook.isPresent() ? ResponseEntity.ok(Cook) : ResponseEntity.status(HttpStatus.NOT_FOUND).body(Cook);
     }
 
+    @GetMapping("/user/{id}")
+    public List<Cook> getCookByUserId(@PathVariable Long id) {
+        return cookService.getAllCooksFromUser(id);
+    }
+
     @PostMapping("/")
     public ResponseEntity<Cook> createCook(@RequestBody Cook Cook) {
         Cook savedCook = cookService.saveCook(Cook);

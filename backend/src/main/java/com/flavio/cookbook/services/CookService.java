@@ -43,4 +43,8 @@ public class CookService {
         }
     }
 
+    public List<Cook> getAllCooksFromUser(Long id) {
+        return cookRepository.findByUser_Id(id);
+    }
+
 }

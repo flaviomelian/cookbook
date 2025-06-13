@@ -10,21 +10,21 @@ const MainMenu = () => {
         <View style={styles.container}>
             <TouchableOpacity
                 style={styles.button}
-                onPress={() => { }}
+                onPress={() => navigation.navigate('Cooks')}
             >
-                <Text style={styles.buttonText} onPress={() => navigation.navigate('Cooks')}>Recetas de la comunidad</Text>
+                <Text style={styles.buttonText}>Recetas de la comunidad</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.button}
-                onPress={() => { }}
+                onPress={() => navigation.navigate('Cooks', { id: 1 })}
             >
-                <Text style={styles.buttonText} onPress={() => navigation.navigate('AddUpdateCook')}>Mis Recetas</Text>
+                <Text style={styles.buttonText}>Mis Recetas</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.button}
-                onPress={() => { }}
+                onPress={() => navigation.navigate('AddUpdateCook')}
             >
-                <Text style={styles.buttonText} onPress={() => navigation.navigate('AddUpdateCook')}>Crear Receta</Text>
+                <Text style={styles.buttonText}>Crear Receta</Text>
             </TouchableOpacity>
         </View>
     )
