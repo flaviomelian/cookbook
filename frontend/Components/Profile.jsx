@@ -51,7 +51,7 @@ const Profile = () => {
             <View style={styles.container}>
                 <Text style={styles.header}>Datos de su perfil:</Text>
                 {renderData(dataUser)}
-                <TouchableOpacity style={styles.myCooks} onPress={() => navigation.navigate('AddUpdateCook')}>
+                <TouchableOpacity style={styles.myCooks} onPress={() => navigation.navigate('Cooks', { id: 1 })}>
                     <Text style={styles.buttonText}>Ver mis recetas</Text>
                 </TouchableOpacity>
             </View>
