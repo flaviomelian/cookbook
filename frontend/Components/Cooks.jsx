@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { getAllCooks, deleteCook, getCooksFromUser, getCooksSortByRate } from '../services/cookService.js';
+import { getAllCooks, deleteCook, getCooksFromUser, getCooksSortByRate, getRatedCooksFromUser } from '../services/cookService.js';
 import icon from '../assets/cook.png';
 import trash from '../assets/delete.png';
 import upward from '../assets/arrow_upward.png';
@@ -21,8 +21,10 @@ const Cooks = ({ userId }) => {
     const fetchCooks = async () => {
       try {
         let data;
-        if (down !== null) data = await getCooksSortByRate(down);
+
+        if (userId && down !== null) data = await getRatedCooksFromUser(userId, down);
         else if (userId) data = await getCooksFromUser(userId);
+        else if (down !== null) data = await getCooksSortByRate(down);
         else data = await getAllCooks();
         setCooks(data);
       } catch (error) {
@@ -32,6 +34,7 @@ const Cooks = ({ userId }) => {
 
     fetchCooks();
   }, [refresh, userId, down]);
+
 
 
   const handleDelete = async (id) => {

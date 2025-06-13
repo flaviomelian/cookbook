@@ -52,4 +52,9 @@ public class CookService {
         return cookRepository.findAllOrderByRatingAsc();
     }
 
+    public List<Cook> getAllCooksFromUserRated(Long id, boolean down) {
+        if (down) return cookRepository.findAllOrderByRatingDesc(id);
+        return cookRepository.findAllOrderByRatingAsc(id);
+    }
+
 }

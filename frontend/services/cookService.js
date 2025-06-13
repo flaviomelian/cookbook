@@ -39,3 +39,13 @@ export const getCooksFromUser = async (id) => {
     throw error;
   }
 }
+
+export const getRatedCooksFromUser = async (id, down) => {
+  try {
+    const { data } = await api.get(`cooks/user/${id}/${down}`);
+    return data;
+  } catch (error) {
+    console.error('Error deleting cook:', error);
+    throw error;
+  }
+}

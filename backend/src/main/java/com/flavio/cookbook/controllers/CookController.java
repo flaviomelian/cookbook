@@ -35,6 +35,11 @@ public class CookController {
         return cookService.getAllCooksFromUser(id);
     }
 
+    @GetMapping("/user/{id}/{down}")
+    public List<Cook> getCookByUserId(@PathVariable Long id, @PathVariable boolean down) {
+        return cookService.getAllCooksFromUserRated(id, down);
+    }
+
     @GetMapping("/sort/{down}")
     public List<Cook> getCooksSortByRate(@PathVariable boolean down) {
         return cookService.getCooksSortByRate(down);
