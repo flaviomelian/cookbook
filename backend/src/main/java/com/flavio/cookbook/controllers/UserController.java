@@ -59,7 +59,7 @@ public class UserController {
     public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
         String email = credentials.get("email");
         String password = credentials.get("password");
-        Optional<User> userOpt = userService.getUserByEmail(email);
+        Optional<User> userOpt = userService.getUserByEmail(email);;
         if (userOpt.isEmpty() || !passwordEncoder.matches(password, userOpt.get().getPassword())) 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email or password is incorrect");
         String token = jwtUtil.generateToken(email);

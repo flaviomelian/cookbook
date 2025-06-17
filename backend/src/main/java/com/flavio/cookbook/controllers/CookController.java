@@ -19,8 +19,9 @@ public class CookController {
         this.cookService = cookService;
     }
 
-    @GetMapping("/")
+    @GetMapping
     public List<Cook> getAllCooks() {
+        System.out.println("Fetching all cooks");
         return cookService.getAllCooks();
     }
 
@@ -67,4 +68,3 @@ public class CookController {
         }
     }
 }
-

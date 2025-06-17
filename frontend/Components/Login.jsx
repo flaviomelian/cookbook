@@ -14,9 +14,22 @@ const Login = () => {
     const navigation = useNavigation();
 
     const handleLogin = async () => {
-        // Aquí iría la lógica de login
-        console.log('Login:', username, password);
-        await login(username, password)
+        if (!username || !password) {
+            alert('Por favor, complete todos los campos.');
+            return;
+        }
+        try {
+            const res = await login(username, password)
+            if (res.status === 200) navigation.navigate('Home');
+            else alert('Credenciales incorrectas.');
+        } catch (error) {
+            if (error.response) {
+                console.log(error.response.status); // 401 aquí
+                alert('Credenciales incorrectas.');
+            } else {
+                alert('Error de red o servidor');
+            }
+        }
     };
 
     return (
@@ -49,12 +62,12 @@ const Login = () => {
                             onPress={() => setPasswordVisible(!isPasswordVisible)}
                             style={styles.toggleButton}
                         >
-                            {isPasswordVisible ? <Image style={styles.visibility} source={visible}/> : <Image style={styles.visibility} source={notVisible}/>}
+                            {isPasswordVisible ? <Image style={styles.visibility} source={visible} /> : <Image style={styles.visibility} source={notVisible} />}
                         </TouchableOpacity>
                     </View>
                 </View>
                 <View>
-                    <TouchableOpacity style={styles.button} onPress={handleLogin}>
+                    <TouchableOpacity style={styles.button} onPress={() => handleLogin()}>
                         <Text style={styles.textButton}>Iniciar Sesión</Text>
                     </TouchableOpacity>
                 </View>
@@ -118,7 +131,7 @@ const styles = StyleSheet.create({
         color: '#0070f0',
         paddingRight: 20,
         width: '70%'
-    }, 
+    },
     visibility: {
         position: 'absolute',
         bottom: -15,

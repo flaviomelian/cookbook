@@ -1,7 +1,9 @@
 import axios from 'axios';
+import {BASE_URL} from '@env'
 
 const api = axios.create({
-    baseURL: 'http://192.168.1.129:8080/api/', // Dirección base de la API en el servidor local.
+    baseURL: BASE_URL, // Dirección base de la API en el servidor.
+    withCredentials: true,
     headers: { 'Content-Type': 'application/json' }
 });
 

@@ -20,7 +20,7 @@ const Cooks = ({ userId }) => {
   useEffect(() => {
     const fetchCooks = async () => {
       try {
-        let data;
+        let data = [];
 
         if (userId && down !== null) data = await getRatedCooksFromUser(userId, down);
         else if (userId) data = await getCooksFromUser(userId);
