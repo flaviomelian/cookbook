@@ -1,13 +1,13 @@
-import { View, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import Cooks from './Cooks.jsx'; // Assuming Cooks.jsx is the component that displays the Cooks
 
 const CooksScreen = ({route}) => {
   const id = route?.params?.id;
   console.log(id, "lolko")
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Cooks userId={id}/>
-    </View>
+    </ScrollView>
   );
 };
 

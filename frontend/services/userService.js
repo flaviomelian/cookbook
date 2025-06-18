@@ -6,10 +6,9 @@ export const getUser = async (id) => {
 }
 
 export const login = async (email, password) => {
-    console.log("login", email, password);
     const res = await api.post(`users/login`, { email, password });
-    console.log("response", res);  
-    return res 
+    console.log("response", res.data);  
+    return res.data; // Devolver el token. 
 }
 
 export const signup = async (username, email, password) => {

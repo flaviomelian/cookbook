@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { getUser } from '../services/userService'
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import logout from '../assets/logout.png';
 
 const Profile = () => {
 
@@ -38,6 +39,44 @@ const Profile = () => {
         }
     }, [isAuthenticated]);
 
+    const handleDeleteAccount = async () => {
+        console.log('handleDeleteAccount called');
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+            alert('No estás autenticado.');
+            return;
+        }
+
+        Alert.alert(
+            'Confirmar eliminación',
+            '¿Estás seguro de que desea eliminar su cuenta? Esta acción no se puede deshacer. Deberá registrarse nuevamente si desea continuar usando la aplicación.',
+            [
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Eliminar',
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            // Aquí deberías llamar a tu función real, por ejemplo:
+                            // await deleteUserAccount(token);
+
+                            alert('Cuenta eliminada exitosamente.');
+                            navigation.reset({
+                                index: 0,
+                                routes: [{ name: 'Login' }],
+                            });
+                        } catch (error) {
+                            console.error('Error al eliminar la cuenta:', error);
+                            alert('Error al eliminar la cuenta. Inténtalo de nuevo más tarde.');
+                        }
+                    },
+                },
+            ]
+        );
+    };
 
     const renderData = (data, prefix = '') => {
         return Object.entries(data).map(([key, value]) => {
@@ -78,15 +117,29 @@ const Profile = () => {
                 </TouchableOpacity>
             </View>
             <View style={styles.actions}>
-                <TouchableOpacity style={styles.update}>
-                    <Text style={styles.buttonText}>Actualizar Datos</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.delete}>
-                    <Text style={styles.buttonText}>Eliminar mi cuenta</Text>
-                </TouchableOpacity>
-            </View>
-
+                <View>
+                    <TouchableOpacity style={styles.update} onPress={() => navigation.navigate('AddUpdateUser', { user: dataUser })}>
+                        <Text style={styles.buttonText}>Actualizar Datos</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.delete}>
+                        <Text style={styles.buttonText} onPress={() => handleDeleteAccount()}>Eliminar mi cuenta</Text>
+                    </TouchableOpacity>
+                </View>
+                <TouchableOpacity
+                    style={[styles.myCooks, { marginTop: 25, width: 50, height: 50 }]}
+                    onPress={async () => {
+                        await AsyncStorage.removeItem('token');
+                        await AsyncStorage.removeItem('userId');
+                        navigation.navigate({
+                            index: 0,
+                            routes: [{ name: 'Login' }],
+                        });
+                    }}>
+                    <Image source={logout} />
+            </TouchableOpacity>
         </View>
+
+        </View >
 
     )
 }
@@ -132,21 +185,23 @@ const styles = StyleSheet.create({
         marginRight: 15,
         padding: 20,
         borderRadius: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
     },
     update: {
         backgroundColor: '#dddd00',
         flexDirection: 'row',
         justifyContent: 'center',
-        padding: 5,
-        margin: 3,
+        padding: 7,
+        marginTop: 7,
         borderRadius: 10,
     },
     delete: {
         backgroundColor: '#aa0000',
         flexDirection: 'row',
         justifyContent: 'center',
-        padding: 5,
-        margin: 3,
+        padding: 7,
+        marginTop: 17,
         borderRadius: 10,
     },
     data: {

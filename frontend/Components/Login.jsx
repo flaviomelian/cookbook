@@ -6,12 +6,14 @@ import lock from '../assets/lock.png';
 import visible from '../assets/visibility_on.png';
 import notVisible from '../assets/visibility_off.png';
 import { login } from '../services/userService';
+import { useAuth } from '../Context/AuthContext';
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [isPasswordVisible, setPasswordVisible] = useState(false);
     const navigation = useNavigation();
+    const { login: saveToken } = useAuth();
 
     const handleLogin = async () => {
         if (!username || !password) {
@@ -19,15 +21,20 @@ const Login = () => {
             return;
         }
         try {
-            const res = await login(username, password)
-            if (res.status === 200) navigation.navigate('Home');
-            else alert('Credenciales incorrectas.');
+            const response = await login(username, password);
+            console.log(response.token);
+            
+            if (response.token) {
+                await saveToken(response.token);
+                console.log('Token guardado MANITO:', response.token);
+                console.log('Estado auth:', saveToken);
+            }
         } catch (error) {
-            if (error.response) {
-                console.log(error.response.status); // 401 aquí
+            if (error.response?.status === 401) {
                 alert('Credenciales incorrectas.');
             } else {
-                alert('Error de red o servidor');
+                alert(error.response?.status);
+                console.error('Error al iniciar sesión:', error);
             }
         }
     };

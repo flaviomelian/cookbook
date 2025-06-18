@@ -4,6 +4,7 @@ import home from '../assets/home.png';
 import account from '../assets/account.png';
 import dashboard from '../assets/dashboard.png';
 import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../Context/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const NavBar = () => {
@@ -12,6 +13,7 @@ const NavBar = () => {
   const [activeButton1, setActiveButton1] = useState(false);
   const [activeButton2, setActiveButton2] = useState(false);
   const [activeButton3, setActiveButton3] = useState(false);
+  const { token } = useAuth();
 
   const handleHomePress = async () => {
     setActiveButton1(true);
@@ -22,7 +24,7 @@ const NavBar = () => {
     if (!token) navigation.navigate('Home');
     else navigation.navigate('Feed');
   };
-  
+
   const handleDashboardPress = async () => {
     setActiveButton1(false);
     setActiveButton2(true);
@@ -37,10 +39,7 @@ const NavBar = () => {
     setActiveButton1(false);
     setActiveButton2(false);
     setActiveButton3(true);
-
-    const token = await AsyncStorage.getItem('token');
-    if (!token) navigation.navigate('Login');
-    else navigation.navigate('Profile');
+    navigation.navigate('Profile');
   };
 
   return (
