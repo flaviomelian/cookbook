@@ -5,11 +5,13 @@ import description from '../assets/description.png';
 import grocery from '../assets/grocery.png';
 import StarRating from './StarRating';
 import { postComment } from '../services/commentsService';
+import { getAllCommentsFromCook } from '../services/commentsService';
 import { useAuth } from '../Context/AuthContext';
 
 
 const CookDetails = ({ route }) => {
     const { cook } = route.params;
+    const [comments, setComments] = useState([]);
     const [comment, setComment] = useState(false);
     const [comfy, setComfy] = useState(false);
     const user = useAuth();
@@ -32,6 +34,33 @@ const CookDetails = ({ route }) => {
             keyboardDidShowListener.remove();
             keyboardDidHideListener.remove();
         };
+    }, []);
+
+    useEffect(() => {
+        const fetchComments = async () => {
+            try {
+                const response = await getAllCommentsFromCook(cook.id);
+                if (response.status === 200) setComments(response.data);
+                else console.error('Error fetching comments:', response.status);
+                console.log('Comments fetched:', comments);
+            } catch (error) {
+                console.error('Error fetching comments:', error);
+            }
+        };
+
+        fetchComments();
+
+        const backAction = () => {
+            navigation.goBack();
+            return true;
+        };
+
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+
+        return () => backHandler.remove();
     }, []);
 
     return (
@@ -92,11 +121,14 @@ const CookDetails = ({ route }) => {
                         borderBottomWidth: 1,
                         marginVertical: 10,
                     }} />
-                    <View>
+                    <View style={[styles.comments, {backgroundColor: '#006AFD', padding: 10}]}>
                         <Text style={[styles.titleAlt, { fontSize: 18 }]}>Comentarios:</Text>
-                        {cook.comments && cook.comments.length > 0 ? (
-                            cook.comments.map((c, index) => (
-                                <Text key={index} style={styles.text}>- {c}</Text>
+                        {comments.length > 0 ? (
+                            comments.map((comment, index) => (
+                                <>
+                                    <Text>{comment.userEmail}</Text>
+                                    <Text key={index} style={styles.text}>- {comment.content}</Text>
+                                </>
                             ))
                         ) : (
                             <Text style={styles.text}>No hay comentarios aún.</Text>

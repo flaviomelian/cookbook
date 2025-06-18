@@ -3,6 +3,8 @@ package com.flavio.cookbook.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.flavio.cookbook.dto.CommentDTO;
 import com.flavio.cookbook.models.Comment;
 import com.flavio.cookbook.services.CommentService;
 import java.util.List;
@@ -31,7 +33,7 @@ public class CommentController {
     }
 
     @GetMapping("/cook/{id}")
-    public List<Comment> getCommentByCookId(@PathVariable Long id) {
+    public List<CommentDTO> getCommentByCookId(@PathVariable Long id) {
         return commentService.getAllCommentsFromCook(id);
     }
 

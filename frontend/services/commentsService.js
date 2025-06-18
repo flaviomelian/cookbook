@@ -6,7 +6,8 @@ export const postComment = async (comment) => {
 }
 
 export const getAllCommentsFromCook = async (id) => {
-  const response = await api.get('comments/cook', id);
+  console.log("getAllCommentsFromCook")
+  const response = await api.get(`comments/cook/${id}`);
   console.log("response", response.data);
-  return response.status;  // devuelve el código HTTP (por ejemplo, 201, 200, 400, etc)
+  return response;  // devuelve el código HTTP (por ejemplo, 201, 200, 400, etc)
 }

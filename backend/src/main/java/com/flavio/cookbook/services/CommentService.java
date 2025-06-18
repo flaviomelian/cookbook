@@ -2,10 +2,12 @@ package com.flavio.cookbook.services;
 
 import org.springframework.stereotype.Service;
 import com.flavio.cookbook.repositories.CommentRepository;
+import com.flavio.cookbook.dto.CommentDTO;
 import com.flavio.cookbook.models.Comment;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,7 +35,7 @@ public class CommentService {
 
     public void updateComment(Long id, Comment comment) {
         Optional<Comment> commentUpdate = commentRepository.findById(id);
-        if (commentUpdate.isPresent()){
+        if (commentUpdate.isPresent()) {
             Comment commentSave = commentUpdate.get();
             commentSave.setContent(comment.getContent());
             commentSave.setCreatedAt(comment.getCreatedAt());
@@ -42,8 +44,10 @@ public class CommentService {
         }
     }
 
-    public List<Comment> getAllCommentsFromCook(Long id) {
-        return commentRepository.findAllCommentsByCook(id);
+    public List<CommentDTO> getAllCommentsFromCook(Long id) {
+        return commentRepository.findAllCommentsByCook(id).stream()
+                .map(CommentDTO::new)
+                .collect(Collectors.toList());
     }
 
 }

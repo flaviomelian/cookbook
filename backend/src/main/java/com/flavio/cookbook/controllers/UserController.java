@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.flavio.cookbook.components.JwtUtil;
 import com.flavio.cookbook.models.User;
-import com.flavio.cookbook.repositories.UserRepository;
 import com.flavio.cookbook.services.UserService;
 
 import java.time.LocalDateTime;
