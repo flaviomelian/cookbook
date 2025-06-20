@@ -25,8 +25,8 @@ Proyecto simple para gestionar y compartir recetas entre usuarios, con app móvi
 
 ## 🧩 Estructura básica del backend
 
-- Entidades: Usuario, Receta, Grupo.
-- API REST para autenticación, recetas y grupos.
+- Entidades: Usuario, Receta, Comentario.
+- API REST para autenticación, recetas y comentarios.
 - Seguridad con JWT y control de acceso simple.
 
 ---
