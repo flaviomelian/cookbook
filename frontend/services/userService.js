@@ -43,3 +43,34 @@ export const validatePassword = async (id, password, token) => {
         return false;
     }
 };
+
+export const logout = async (token) => {
+    try {
+        const { data } = await api.post(
+            `users/logout`,
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return data; // Devuelve la respuesta de la API después de cerrar sesión.
+    } catch (error) {
+        console.error('Error during logout:', error);
+        throw error; // Propaga el error para manejarlo en el lugar donde se llama a esta función.
+    }
+}
+
+export const updateUser = async (id, name, email, password, language, level, token) => {
+    const { data } = await api.put(
+        `users/${id}`,
+        { name, email, password, language, level },
+        {
+            headers: {
+                Authorization: `Bearer ${token}` // Se envía el token de autenticación en los encabezados.
+            }
+        }
+    );
+    return data; // Devuelve los datos actualizados del usuario.
+}

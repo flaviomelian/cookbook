@@ -84,13 +84,23 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public void updateuser(@PathVariable Long id, @RequestBody User user) {
-        if (userService.getUserById(id).isPresent())
-            userService.updateUser(user);
-    }
+public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User user) {
+    Optional<User> userOpt = userService.getUserById(id);
+    if (userOpt.isEmpty()) 
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+    User existingUser = userOpt.get();
+    existingUser.setName(user.getName());
+    existingUser.setEmail(user.getEmail());
+    existingUser.setLanguage(user.getLanguage());
+    if (user.getPassword() != null && !user.getPassword().isEmpty()) 
+        existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
+    existingUser.setUpdatedAt(LocalDateTime.now());
+    userService.saveUser(existingUser);
+    return ResponseEntity.ok(existingUser);
+}
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteuser(@PathVariable Long id) {
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         if (userService.getUserById(id).isPresent()) {
             userService.deleteUser(id);
             return ResponseEntity.ok("Usuario eliminado correctamente.");

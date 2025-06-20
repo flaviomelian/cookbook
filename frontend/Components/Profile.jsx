@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, TextInput, Moda
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../Context/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import logout from '../assets/logout.png';
+import logoutImg from '../assets/logout.png';
 
 const Profile = () => {
 
@@ -16,7 +16,7 @@ const Profile = () => {
     const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState('');
 
-    const { token, loading } = useAuth();
+    const { token, loading, logout } = useAuth();
 
     useEffect(() => {
         if (!loading)
@@ -82,6 +82,8 @@ const Profile = () => {
                 await deleteUserAccount(userId, token);
                 setShowPasswordPrompt(false);
                 setConfirmPassword('');
+                logout(); // Llama a la función de logout para limpiar el token y redirigir al login
+                await AsyncStorage.removeItem('userId');
                 alert('Cuenta eliminada exitosamente.');
                 navigation.reset({
                     index: 0,
@@ -134,7 +136,7 @@ const Profile = () => {
             </View>
             <View style={styles.actions}>
                 <View>
-                    <TouchableOpacity style={styles.update} onPress={() => navigation.navigate('AddUpdateUser', { user: dataUser })}>
+                    <TouchableOpacity style={styles.update} onPress={() => navigation.navigate('UpdateUser', { user: dataUser })}>
                         <Text style={styles.buttonText}>Actualizar Datos</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.delete} onPress={handleDeleteAccount}>
@@ -145,8 +147,7 @@ const Profile = () => {
                     <TouchableOpacity
                         style={[styles.myCooks, { marginTop: 25, width: 50, height: 50 }]}
                         onPress={async () => {
-                            await AsyncStorage.removeItem('token');
-                            await AsyncStorage.removeItem('userId');
+                            await logout(); // <-- Usa el método del contexto
                             navigation.reset({
                                 index: 0,
                                 routes: [{ name: 'Login' }],
@@ -154,7 +155,7 @@ const Profile = () => {
                             setIsAuthenticated(false);
                             alert('Sesión cerrada correctamente.');
                         }}>
-                        <Image source={logout} />
+                        <Image source={logoutImg} />
                     </TouchableOpacity>
                 </View>
             </View>

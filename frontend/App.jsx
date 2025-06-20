@@ -12,6 +12,7 @@ import AddUpdateCook from './Components/AddUpdateCook.jsx';
 import Login from './Components/Login.jsx';
 import Signup from './Components/Signup.jsx';
 import Profile from './Components/Profile.jsx';
+import UpdateUser from './Components/UpdateUser.jsx';
 import { useAuth } from './Context/AuthContext.jsx';
 import { useEffect, useState } from 'react';
 
@@ -44,6 +45,8 @@ const RootNavigator = () => {
     };
     if (!token) checkFirstTime();
     else setShowHome(false);
+    console.log('Token:', token);
+    console.log('Show Home:', showHome);
   }, [token]);
 
   if (loading || showHome === null) return null;
@@ -60,6 +63,7 @@ const RootNavigator = () => {
               <Stack.Screen name="Cooks" component={CooksScreen} />
               <Stack.Screen name="CookDetails" component={CookDetails} />
               <Stack.Screen name="AddUpdateCook" component={AddUpdateCook} />
+              <Stack.Screen name="UpdateUser" component={UpdateUser} />
               <Stack.Screen name="Profile" component={Profile} />
               <Stack.Screen name="Login" component={Login} />
             </>

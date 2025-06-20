@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import account from '../assets/account.png';
@@ -6,19 +6,23 @@ import lock from '../assets/lock.png';
 import emailIcon from '../assets/email.png';
 import languageIcon from '../assets/language.png';
 import location from '../assets/location.png';
-import { signup } from '../services/userService';
+import { updateUser } from '../services/userService';
 import { Picker } from '@react-native-picker/picker';
 import CheckBox from 'expo-checkbox';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getUser } from '../services/userService'; // Asegúrate de que esta función esté definida en tu servicio
 
-const Signup = () => {
+const UpdateUser = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [language, setLanguage] = useState('');
     const [isChecked, setIsChecked] = useState(false);
+    const [user, setUser] = useState({}); // Estado para almacenar los datos del usuario
     const navigation = useNavigation();
+    const token = AsyncStorage.getItem('token'); // Asegúrate de que el token esté disponible
 
-    const handleSignup = () => {
+    const handleUpdateUser = () => {
         // Validación de campos
         if (!name.trim()) {
             alert('Por favor, ingresa tu nombre.');
@@ -28,10 +32,7 @@ const Signup = () => {
             alert('Por favor, ingresa un email válido.');
             return;
         }
-        if (!password || password.length < 6) {
-            alert('La contraseña debe tener al menos 6 caracteres.');
-            return;
-        }
+        if (!password || password.length < 6) setPassword(user.password); // Si no se ingresa una nueva contraseña, se mantiene la actual
         if (!language) {
             alert('Por favor, selecciona un idioma.');
             return;
@@ -42,15 +43,40 @@ const Signup = () => {
         //     return;
         // }
 
-        signup(name, email, password, language, 'COCINILLAS');
-        alert('Registro exitoso. Por favor, inicia sesión.');
-        navigation.navigate('Login');
+        updateUser(user.id, name, email, password, language, user.level, token);
+        navigation.navigate('Profile');
     };
+
+    useEffect(() => {
+        const fetchDataUser = async () => {
+            try {
+                const userId = await AsyncStorage.getItem('userId');
+                if (!userId) {
+                    Alert.alert('Error', 'No se encontró el ID de usuario.');
+                    return;
+                }
+                const data = await getUser(userId);
+                setUser(data);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+                Alert.alert('Error', 'No se pudo obtener la información del usuario.');
+            }
+        };
+
+        fetchDataUser();
+    }, []);
+
+    useEffect(() => {
+        if (user && user.name) setName(user.name);
+        if (user && user.email) setEmail(user.email);
+        if (user && user.language) setLanguage(user.language);
+        // Si tienes más campos, agrégalos aquí
+    }, [user]);
 
     return (
         <View style={styles.container}>
             <View style={styles.form}>
-                <Text style={styles.title}>Registro</Text>
+                <Text style={styles.title}>Actualizar datos</Text>
                 <View style={styles.inputs}>
                     <View style={styles.inputImage}>
                         <Image style={styles.icon} source={account} />
@@ -113,13 +139,8 @@ const Signup = () => {
                         </View>
                     </View>
                 </View>
-                <TouchableOpacity style={styles.button} onPress={handleSignup}>
-                    <Text style={styles.textButton}>Registrarse</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Login')} style={{ alignItems: 'center', marginTop: 10 }}>
-                    <Text style={{ color: '#70a1ff' }}>
-                        ¿Ya tienes cuenta? <Text style={{ fontWeight: 'bold', color: '#000166' }}>Inicia sesión</Text>
-                    </Text>
+                <TouchableOpacity style={styles.update} onPress={handleUpdateUser}>
+                    <Text style={styles.buttonText}>Actualizar</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -183,6 +204,23 @@ const styles = StyleSheet.create({
         width: 35,
         height: 35,
     },
+    update: {
+        backgroundColor: '#dddd00',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        padding: 12,
+        margin: 'auto',
+        marginTop: 30,
+        borderRadius: 10,
+        width: '80%',
+    },
+    buttonText: {
+        color: '#F8F9FA',
+        textShadowColor: 'rgba(0, 0, 0, 0.61)',
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 1,
+        fontSize: 14
+    }
 });
 
-export default Signup;
+export default UpdateUser;
