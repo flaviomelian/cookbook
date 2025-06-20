@@ -39,7 +39,10 @@ const NavBar = () => {
     setActiveButton1(false);
     setActiveButton2(false);
     setActiveButton3(true);
-    navigation.navigate('Profile');
+    console.log('token', token);
+    
+    if (!token) navigation.navigate('Login');
+    else navigation.navigate('Profile');;
   };
 
   return (

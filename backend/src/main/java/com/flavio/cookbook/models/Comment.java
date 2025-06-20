@@ -3,6 +3,8 @@ package com.flavio.cookbook.models;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(name = "comments")
 public class Comment {
@@ -18,6 +20,7 @@ public class Comment {
     // Relación con el usuario que hizo el comentario
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
     // Relación con la receta donde se hizo el comentario
@@ -65,5 +68,5 @@ public class Comment {
     public void setCook(Cook cook) {
         this.cook = cook;
     }
-    
+
 }

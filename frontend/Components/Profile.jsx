@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { getUser } from '../services/userService'
-import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native'
+import { getUser, deleteUserAccount, validatePassword } from '../services/userService' // Asegúrate de tener validatePassword
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, TextInput, Modal } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../Context/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import logout from '../assets/logout.png';
 
@@ -11,36 +12,42 @@ const Profile = () => {
     const [dataUser, setDataUser] = useState([])
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    useEffect(() => {
-        const checkAuth = async () => {
-            const token = await AsyncStorage.getItem('token');
+    // Estados para el prompt de contraseña
+    const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
+    const [confirmPassword, setConfirmPassword] = useState('');
 
-            if (!token) {
+    const { token, loading } = useAuth();
+
+    useEffect(() => {
+        if (!loading)
+            if (!token)
                 navigation.reset({
                     index: 0,
                     routes: [{ name: 'Login' }],
                 });
-            } else {
-                setIsAuthenticated(true);
-            }
-        };
-
-        checkAuth();
-    }, []);
+            else setIsAuthenticated(true);
+    }, [token, loading]);
 
     useEffect(() => {
         const fetchDataUser = async () => {
-            const data = await getUser(1);
-            setDataUser(data);
+            try {
+                const userId = await AsyncStorage.getItem('userId');
+                if (!userId) {
+                    Alert.alert('Error', 'No se encontró el ID de usuario.');
+                    return;
+                }
+                const data = await getUser(userId);
+                setDataUser(data);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+                Alert.alert('Error', 'No se pudo obtener la información del usuario.');
+            }
         };
 
-        if (isAuthenticated) {
-            fetchDataUser();
-        }
+        if (isAuthenticated) fetchDataUser();
     }, [isAuthenticated]);
 
     const handleDeleteAccount = async () => {
-        console.log('handleDeleteAccount called');
         const token = await AsyncStorage.getItem('token');
         if (!token) {
             alert('No estás autenticado.');
@@ -58,24 +65,35 @@ const Profile = () => {
                 {
                     text: 'Eliminar',
                     style: 'destructive',
-                    onPress: async () => {
-                        try {
-                            // Aquí deberías llamar a tu función real, por ejemplo:
-                            // await deleteUserAccount(token);
-
-                            alert('Cuenta eliminada exitosamente.');
-                            navigation.reset({
-                                index: 0,
-                                routes: [{ name: 'Login' }],
-                            });
-                        } catch (error) {
-                            console.error('Error al eliminar la cuenta:', error);
-                            alert('Error al eliminar la cuenta. Inténtalo de nuevo más tarde.');
-                        }
-                    },
+                    onPress: () => setShowPasswordPrompt(true),
                 },
             ]
         );
+    };
+
+    // Nueva función para confirmar borrado con contraseña
+    const confirmDelete = async () => {
+        try {
+            const userId = await AsyncStorage.getItem('userId');
+            const token = await AsyncStorage.getItem('token');
+            // Aquí llamas a tu backend para validar la contraseña
+            const isValid = await validatePassword(userId, confirmPassword, token); // Implementa esto en tu servicio
+            if (isValid) {
+                await deleteUserAccount(userId, token);
+                setShowPasswordPrompt(false);
+                setConfirmPassword('');
+                alert('Cuenta eliminada exitosamente.');
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Login' }],
+                });
+            } else {
+                Alert.alert('Contraseña incorrecta', 'La contraseña no coincide.');
+            }
+        } catch (error) {
+            console.error('Error al eliminar la cuenta:', error);
+            alert('Error al eliminar la cuenta. Inténtalo de nuevo más tarde.');
+        }
     };
 
     const renderData = (data, prefix = '') => {
@@ -83,7 +101,7 @@ const Profile = () => {
             const displayKey = prefix ? `${prefix}.${key}` : key;
 
             // Excluir password
-            if (displayKey.includes('password') || displayKey.includes('cooks')) return null;
+            if (displayKey.includes('password') || displayKey.includes('cooks') || displayKey.includes('role')) return null;
 
             // Si es clave 'id' dentro de 'cooks' renderiza línea horizontal simulada
             if (key === 'id')
@@ -99,13 +117,11 @@ const Profile = () => {
                 );
             else return (
                 <Text style={styles.data} key={displayKey}>
-                    {`${displayKey}: ${String(value)}`}
+                    {String(value) === 'null' ? (`${displayKey}: deberias actualizar ${displayKey}`) : (`${displayKey}: ${String(value)}`)}
                 </Text>
             );
         });
     };
-
-
 
     return (
         <View style={styles.background}>
@@ -121,26 +137,99 @@ const Profile = () => {
                     <TouchableOpacity style={styles.update} onPress={() => navigation.navigate('AddUpdateUser', { user: dataUser })}>
                         <Text style={styles.buttonText}>Actualizar Datos</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.delete}>
-                        <Text style={styles.buttonText} onPress={() => handleDeleteAccount()}>Eliminar mi cuenta</Text>
+                    <TouchableOpacity style={styles.delete} onPress={handleDeleteAccount}>
+                        <Text style={styles.buttonText}>Eliminar mi cuenta</Text>
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity
-                    style={[styles.myCooks, { marginTop: 25, width: 50, height: 50 }]}
-                    onPress={async () => {
-                        await AsyncStorage.removeItem('token');
-                        await AsyncStorage.removeItem('userId');
-                        navigation.navigate({
-                            index: 0,
-                            routes: [{ name: 'Login' }],
-                        });
+                <View>
+                    <TouchableOpacity
+                        style={[styles.myCooks, { marginTop: 25, width: 50, height: 50 }]}
+                        onPress={async () => {
+                            await AsyncStorage.removeItem('token');
+                            await AsyncStorage.removeItem('userId');
+                            navigation.reset({
+                                index: 0,
+                                routes: [{ name: 'Login' }],
+                            });
+                            setIsAuthenticated(false);
+                            alert('Sesión cerrada correctamente.');
+                        }}>
+                        <Image source={logout} />
+                    </TouchableOpacity>
+                </View>
+            </View>
+
+            {/* Modal para pedir la contraseña */}
+            <Modal
+                visible={showPasswordPrompt}
+                transparent
+                animationType="fade"
+                onRequestClose={() => {
+                    setShowPasswordPrompt(false);
+                    setConfirmPassword('');
+                }}
+            >
+                <View style={{
+                    flex: 1,
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    <View style={{
+                        backgroundColor: '#008AE1',
+                        padding: 20,
+                        borderRadius: 10,
+                        width: '80%',
+                        alignItems: 'center'
                     }}>
-                    <Image source={logout} />
-            </TouchableOpacity>
+                        <Text style={{ fontSize: 16, marginBottom: 10, color: '#003f8e', fontWeight: 'bold' }}>
+                            Introduzca su contraseña para confirmar la eliminación de la cuenta
+                        </Text>
+                        <TextInput
+                            placeholder="Contraseña"
+                            secureTextEntry
+                            value={confirmPassword}
+                            onChangeText={setConfirmPassword}
+                            style={{
+                                borderWidth: 1,
+                                borderColor: '#ccc',
+                                borderRadius: 5,
+                                padding: 10,
+                                width: '100%',
+                                marginBottom: 15
+                            }}
+                        />
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
+                            <TouchableOpacity
+                                style={{
+                                    backgroundColor: '#dddd00',
+                                    padding: 10,
+                                    borderRadius: 5,
+                                    flex: 1,
+                                    marginRight: 5
+                                }}
+                                onPress={() => {
+                                    setShowPasswordPrompt(false);
+                                    setConfirmPassword('');
+                                }}>
+                                <Text style={{ color: '#003f8e', textAlign: 'center' }}>Cancelar</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={{
+                                    backgroundColor: '#aa0000',
+                                    padding: 10,
+                                    borderRadius: 5,
+                                    flex: 1,
+                                    marginLeft: 5
+                                }}
+                                onPress={confirmDelete}>
+                                <Text style={{ color: '#fff', textAlign: 'center' }}>Eliminar</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </View>
-
-        </View >
-
     )
 }
 
@@ -153,7 +242,7 @@ const styles = StyleSheet.create({
         paddingTop: 30,
         paddingLeft: 30,
         paddingRight: 30,
-        paddingBottom: 30,
+        paddingBottom: 40,
         marginTop: 70,
         marginLeft: 15,
         marginRight: 15,

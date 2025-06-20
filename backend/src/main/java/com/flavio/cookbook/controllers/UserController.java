@@ -43,11 +43,14 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody User user) {
         Optional<User> existing = userService.getUserByEmail(user.getEmail());
-        if (existing.isPresent()) return ResponseEntity.status(HttpStatus.CONFLICT).body("El usuario ya existe");
+        if (existing.isPresent())
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("El usuario ya existe");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
-
+        user.setActive(true);
+        user.setRole(user.getRole());
+        user.setName(user.getName());
         userService.saveUser(user);
         String token = jwtUtil.generateToken(user.getEmail());
 
@@ -58,11 +61,26 @@ public class UserController {
     public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
         String email = credentials.get("email");
         String password = credentials.get("password");
-        Optional<User> userOpt = userService.getUserByEmail(email);;
-        if (userOpt.isEmpty() || !passwordEncoder.matches(password, userOpt.get().getPassword())) 
+        Optional<User> userOpt = userService.getUserByEmail(email);
+        ;
+        if (userOpt.isEmpty() || !passwordEncoder.matches(password, userOpt.get().getPassword()))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email or password is incorrect");
         String token = jwtUtil.generateToken(email);
-        return ResponseEntity.ok(Map.of("token", token));
+        return ResponseEntity.ok(Map.of("token", token, "user", userOpt.get()));
+    }
+
+    @PostMapping("/{id}/validate-password")
+    public ResponseEntity<Map<String, Boolean>> validatePassword(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> credentials) {
+        String password = credentials.get("password");
+        Optional<User> userOpt = userService.getUserById(id);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("valid", false));
+        }
+        User user = userOpt.get();
+        boolean valid = passwordEncoder.matches(password, user.getPassword());
+        return ResponseEntity.ok(Map.of("valid", valid));
     }
 
     @PutMapping("/{id}")

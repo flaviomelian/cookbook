@@ -13,6 +13,7 @@ import Login from './Components/Login.jsx';
 import Signup from './Components/Signup.jsx';
 import Profile from './Components/Profile.jsx';
 import { useAuth } from './Context/AuthContext.jsx';
+import { useEffect, useState } from 'react';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,36 +29,67 @@ export default function App() {
   );
 }
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+// ...existing code...
+
 const RootNavigator = () => {
-  const { token } = useAuth(); // 👈 Aquí vemos si el usuario está autenticado
-  const { loading } = useAuth();
-  if (loading) return null;
+  const { token, loading } = useAuth();
+  const [showHome, setShowHome] = useState(null);
+
+  useEffect(() => {
+    const checkFirstTime = async () => {
+      const alreadyShown = await AsyncStorage.getItem('alreadyShownHome');
+      if (alreadyShown) setShowHome(false);
+      else setShowHome(true);
+    };
+    if (!token) checkFirstTime();
+    else setShowHome(false);
+  }, [token]);
+
+  if (loading || showHome === null) return null;
+
   return (
     <View style={styles.container}>
       <View style={styles.stackContainer}>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {token ? (
-            // Pantallas para usuarios autenticados
+            // Pantallas autenticadas
             <>
               <Stack.Screen name="Main" component={MainMenu} />
-              <Stack.Screen name="Home" component={Home} />
               <Stack.Screen name="Feed" component={Feed} />
               <Stack.Screen name="Cooks" component={CooksScreen} />
               <Stack.Screen name="CookDetails" component={CookDetails} />
               <Stack.Screen name="AddUpdateCook" component={AddUpdateCook} />
               <Stack.Screen name="Profile" component={Profile} />
+              <Stack.Screen name="Login" component={Login} />
+            </>
+          ) : showHome ? (
+            // Primera vez: muestra Home
+            <>
+              <Stack.Screen name="Home">
+                {props => (
+                  <Home
+                    {...props}
+                    onContinue={async () => {
+                      await AsyncStorage.setItem('alreadyShownHome', 'true');
+                      setShowHome(false);
+                    }}
+                  />
+                )}
+              </Stack.Screen>
+              <Stack.Screen name="Login" component={Login} />
+              <Stack.Screen name="Signup" component={Signup} />
             </>
           ) : (
-            // Pantallas públicas
+            // Siguientes veces: directo a Login
             <>
               <Stack.Screen name="Login" component={Login} />
               <Stack.Screen name="Signup" component={Signup} />
+              <Stack.Screen name="Home" component={Home} />
             </>
           )}
         </Stack.Navigator>
       </View>
-
-      {/* NavBar fijo solo si está logueado */}
       {token && <NavBar />}
     </View>
   );

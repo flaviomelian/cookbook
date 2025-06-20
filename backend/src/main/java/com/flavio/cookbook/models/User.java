@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -18,6 +20,7 @@ public class User {
     private String bio;
     private String location;
     private String language;
+    private String level;
 
     private boolean isActive = true;
 
@@ -38,6 +41,7 @@ public class User {
     private List<Cook> favorites;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Comment> comments;
 
     private Role role;
@@ -96,6 +100,14 @@ public class User {
 
     public void setLanguage(String language) {
         this.language = language;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
     }
 
     public boolean isActive() {

@@ -7,6 +7,7 @@ import visible from '../assets/visibility_on.png';
 import notVisible from '../assets/visibility_off.png';
 import { login } from '../services/userService';
 import { useAuth } from '../Context/AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -22,12 +23,15 @@ const Login = () => {
         }
         try {
             const response = await login(username, password);
-            console.log(response.token);
+            console.log(response);
             
             if (response.token) {
                 await saveToken(response.token);
-                console.log('Token guardado MANITO:', response.token);
-                console.log('Estado auth:', saveToken);
+                console.log('Token guardado, usuario:', response.user);
+                if (response.user && response.user.id) {
+                    await AsyncStorage.setItem('userId', response.user.id.toString());
+                    navigation.navigate('Main');
+                }
             }
         } catch (error) {
             if (error.response?.status === 401) {

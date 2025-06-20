@@ -5,15 +5,19 @@ import account from '../assets/account.png';
 import lock from '../assets/lock.png';
 import emailIcon from '../assets/email.png';
 import { signup } from '../services/userService';
+import { Picker } from '@react-native-picker/picker';
 
 const Signup = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [language, setLanguage] = useState('');
     const navigation = useNavigation();
 
     const handleSignup = () => {
-        signup(name, email, password);
+        signup(name, email, password, language, 'COCINILLAS');
+        alert('Registro exitoso. Por favor, inicia sesión.');
+        navigation.navigate('Login');
     };
 
     return (
@@ -53,6 +57,20 @@ const Signup = () => {
                             onChangeText={setPassword}
                             secureTextEntry
                         />
+                    </View>
+                    <View style={styles.inputImage}>
+                        <Image style={styles.icon} source={account} />
+                        <Picker
+                            selectedValue={language}
+                            style={{ flex: 1, color: '#0070f0', backgroundColor: 'transparent' }}
+                            onValueChange={(itemValue) => setLanguage(itemValue)}
+                            dropdownIconColor="#0070f0"
+                        >
+                            <Picker.Item label="Español" value="es" />
+                            <Picker.Item label="Inglés" value="en" />
+                            <Picker.Item label="Francés" value="fr" />
+                            <Picker.Item label="Alemán" value="de" />
+                        </Picker>
                     </View>
                 </View>
                 <TouchableOpacity style={styles.button} onPress={handleSignup}>

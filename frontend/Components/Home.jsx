@@ -40,7 +40,7 @@ const Home = () => {
                 style={styles.button}
                 onPress={() => { }}
             >
-                <Text style={styles.buttonText} onPress={() => navigation.navigate('AddUpdateCook')}>¡Comienza a crear tu receta!</Text>
+                <Text style={styles.buttonText} onPress={() => navigation.navigate('Login')}>¡Comienza a crear tus recetas!</Text>
             </TouchableOpacity>
         </ScrollView>
     );
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     container: {
         paddingLeft: 15,
         paddingRight: 15,
-        paddingBottom: 40,
+        paddingTop: 10,
         flexGrow: 1,
         justifyContent: 'center',
         backgroundColor: '#008AE1',

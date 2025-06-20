@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -11,17 +12,18 @@ export const AuthProvider = ({ children }) => {
     const loadToken = async () => {
       try {
         const storedToken = await AsyncStorage.getItem('token');
-        setToken(storedToken || null); // 👈 Siempre seteamos algo
+        setToken(storedToken); // <-- Mantén el token si existe
       } catch (err) {
         console.error('Error cargando token:', err);
         setToken(null);
       } finally {
-        setLoading(false); // 👈 Muy importante
+        setLoading(false);
       }
     };
 
     loadToken();
   }, []);
+
 
   const login = async (newToken) => {
     await AsyncStorage.setItem('token', newToken);
