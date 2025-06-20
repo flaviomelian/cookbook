@@ -110,7 +110,7 @@ const CookDetails = ({ route }) => {
                         onBlur={() => setComfy(false)}
                     />
                     {comment && (<TouchableOpacity style={[styles.favourite, { marginLeft: 60 }]} onPress={() => {
-                        postComment({ cook: cook.id, content: comment, userId: user.id, createdAt: new Date().toISOString() }); //Aqui nevecisto el usuario que esta logueado
+                        postComment({ cook: cook.id, content: comment, userId: user.id, createdAt: new Date().toISOString() });
                         alert(`Comentario enviado: ${comment}`);
                         setComment('');
                     }}>
