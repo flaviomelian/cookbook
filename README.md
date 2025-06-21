@@ -19,7 +19,6 @@ Proyecto simple para gestionar y compartir recetas entre usuarios, con app móvi
 - Visualización de recetas propias.
 - Crear y editar recetas (título, ingredientes, pasos).
 - Visualizar detalle de receta (paso a paso).
-- Gestión básica de grupos y compartir recetas (lectura).
 
 ---
 
