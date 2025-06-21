@@ -23,15 +23,11 @@ const Login = () => {
         }
         try {
             const response = await login(username, password);
-            console.log(response);
             
             if (response.token) {
-                await saveToken(response.token);
+                await saveToken(response.token, response.user);
                 console.log('Token guardado, usuario:', response.user);
-                if (response.user && response.user.id) {
-                    await AsyncStorage.setItem('userId', response.user.id.toString());
-                    navigation.navigate('Main');
-                }
+                if (response.user && response.user.id) navigation.navigate('Main');
             }
         } catch (error) {
             if (error.response?.status === 401) {

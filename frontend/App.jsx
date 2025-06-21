@@ -58,6 +58,7 @@ const RootNavigator = () => {
           {token ? (
             // Pantallas autenticadas
             <>
+              <Stack.Screen name="Login" component={Login} />
               <Stack.Screen name="Main" component={MainMenu} />
               <Stack.Screen name="Feed" component={Feed} />
               <Stack.Screen name="Cooks" component={CooksScreen} />
@@ -65,7 +66,6 @@ const RootNavigator = () => {
               <Stack.Screen name="AddUpdateCook" component={AddUpdateCook} />
               <Stack.Screen name="UpdateUser" component={UpdateUser} />
               <Stack.Screen name="Profile" component={Profile} />
-              <Stack.Screen name="Login" component={Login} />
             </>
           ) : showHome ? (
             // Primera vez: muestra Home

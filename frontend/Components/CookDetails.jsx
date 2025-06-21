@@ -14,7 +14,8 @@ const CookDetails = ({ route }) => {
     const [comments, setComments] = useState([]);
     const [comment, setComment] = useState(false);
     const [comfy, setComfy] = useState(false);
-    const user = useAuth();
+    const { user } = useAuth();
+    const [username, setUsername] = useState('');
 
     const dismissKeyboard = () => {
         setComfy(false)
@@ -110,8 +111,12 @@ const CookDetails = ({ route }) => {
                         onBlur={() => setComfy(false)}
                     />
                     {comment && (<TouchableOpacity style={[styles.favourite, { marginLeft: 60 }]} onPress={() => {
-                        postComment({ cook: cook.id, content: comment, userId: user.id, createdAt: new Date().toISOString() });
+                        postComment({ cookId: cook.id, content: comment, userId: user.id, createdAt: new Date().toISOString() });
                         alert(`Comentario enviado: ${comment}`);
+                        setComments(prev => [
+                            ...prev,
+                            { ...comment, userEmail: user.email }
+                        ]);
                         setComment('');
                     }}>
                         <Text style={styles.textButton}>Enviar</Text>
@@ -121,13 +126,15 @@ const CookDetails = ({ route }) => {
                         borderBottomWidth: 1,
                         marginVertical: 10,
                     }} />
-                    <View style={[styles.comments, {backgroundColor: '#006AFD', padding: 10}]}>
-                        <Text style={[styles.titleAlt, { fontSize: 18 }]}>Comentarios:</Text>
+                    <View style={[styles.comments, { backgroundColor: '#006AFD', padding: 10 }]}>
+                        <Text style={[styles.titleAlt, { fontSize: 18, marginBottom: 10 }]}>Comentarios:</Text>
                         {comments.length > 0 ? (
                             comments.map((comment, index) => (
                                 <>
-                                    <Text>{comment.userEmail}</Text>
-                                    <Text key={index} style={styles.text}>- {comment.content}</Text>
+                                    <View key={index} style={{ flexDirection: 'column', justifyContent: 'space-between', marginBottom: 5, padding: 5, borderRadius: 8, borderWidth: 2, borderColor: '#0000A3', backgroundColor: '#12A4F3' }}>
+                                        <Text>{comment.username}</Text>
+                                        <Text key={index} style={styles.text}>- {comment.content}</Text>
+                                    </View>
                                 </>
                             ))
                         ) : (
