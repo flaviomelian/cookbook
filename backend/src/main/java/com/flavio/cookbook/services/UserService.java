@@ -44,4 +44,10 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public List<Cook> getAllFavouriteCooks(Long id) {
+        return userRepository.findById(id).stream()
+                .flatMap(user -> user.getFavorites().stream())
+                .toList();
+    }
+
 }

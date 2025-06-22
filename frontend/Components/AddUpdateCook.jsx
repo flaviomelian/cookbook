@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { use, useEffect, useState } from 'react'
 import { ScrollView, View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native'
 import { Picker } from '@react-native-picker/picker'
 import { postCook, updateCook } from '../services/cookService.js'
+import { useAuth } from '../Context/AuthContext.jsx'
 
 const AddUpdateCook = ({ route, navigation }) => {
 
     const { cook } = route.params || {}
-
+    const { token } = useAuth()
     const [cookName, setCookName] = useState('')
     const [description, setDescription] = useState('')
     const [numOfSteps, setNumOfSteps] = useState('')
@@ -39,11 +40,11 @@ const AddUpdateCook = ({ route, navigation }) => {
         try {
             if (cook) {
                 // Actualizar receta existente
-                await updateCook(cook.id, cookData)
+                await updateCook(cook.id, cookData, token)
                 alert('Receta actualizada con éxito')
             } else {
                 // Crear nueva receta
-                await postCook(cookData)
+                await postCook(cookData, token)
                 alert('Receta creada con éxito')
                 // Resetear formulario si quieres
             }
@@ -126,10 +127,10 @@ const AddUpdateCook = ({ route, navigation }) => {
                     ingredients.every(i => i?.trim?.() !== '')
                 ) ? (
 
-                    
-                        <TouchableOpacity style={styles.button} onPress={managePostCook}>
-                            {cook ? (<Text style={styles.button}>ACTUALIZAR RECETA</Text>) : (<Text style={styles.button}>CREAR RECETA</Text>)}
-                        </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.button} onPress={managePostCook}>
+                        {cook ? (<Text style={styles.button}>ACTUALIZAR RECETA</Text>) : (<Text style={styles.button}>CREAR RECETA</Text>)}
+                    </TouchableOpacity>
                 ) : null}
 
             </View>

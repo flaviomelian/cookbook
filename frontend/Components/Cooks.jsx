@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { getAllCooks, deleteCook, getCooksFromUser, getCooksSortByRate, getRatedCooksFromUser } from '../services/cookService.js';
@@ -17,17 +17,17 @@ const Cooks = ({ userId }) => {
   const navigation = useNavigation();
   const [refresh, setRefresh] = useState(true);
   const [down, setDown] = useState(null);
-  const { token } = useAuth(); 
+  const { token } = useAuth();
 
   useEffect(() => {
     const fetchCooks = async () => {
       try {
         let data = [];
-
-        if (userId && down !== null) data = await getRatedCooksFromUser(userId, down);
-        else if (userId) data = await getCooksFromUser(userId);
+        if (userId) data = await getCooksFromUser(userId, token);
+        else if (userId && down !== null) data = await getRatedCooksFromUser(userId, down);
         else if (down !== null) data = await getCooksSortByRate(down);
         else data = await getAllCooks(token);
+        console.log('Cooks fetched:', data, userId, down);
         setCooks(data);
       } catch (error) {
         console.error('Error fetching cooks:', error);

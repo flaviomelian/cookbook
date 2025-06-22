@@ -89,3 +89,14 @@ export const addToFavourite = async (userId, cookId, token) => {
     console.log("response", res.status);
     return res.status; // Devuelve el código de estado HTTP (por ejemplo, 201, 200, 400, etc).
 }
+
+export const getFavourites = async (userId, token) => {
+    console.log("getFavourites", 'userid', userId, token);
+    const res = await api.get(`users/${userId}/favourites`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    console.log("response", res.data);
+    return res.data; // Devuelve los datos de los favoritos del usuario.
+}

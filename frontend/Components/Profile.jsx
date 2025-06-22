@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getUser, deleteUserAccount, validatePassword } from '../services/userService' // Asegúrate de tener validatePassword
-import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, TextInput, Modal } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, TextInput, Modal, ScrollView } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../Context/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,7 +16,7 @@ const Profile = () => {
     const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState('');
 
-    const { token, loading, logout } = useAuth();
+    const { token, loading, logout, user } = useAuth();
 
     useEffect(() => {
         if (!loading)
@@ -103,7 +103,7 @@ const Profile = () => {
             const displayKey = prefix ? `${prefix}.${key}` : key;
 
             // Excluir password
-            if (displayKey.includes('password') || displayKey.includes('cooks') || displayKey.includes('role')) return null;
+            if (displayKey.includes('password') || displayKey.includes('cooks') || displayKey.includes('role') || displayKey.includes('fav')) return null;
 
             // Si es clave 'id' dentro de 'cooks' renderiza línea horizontal simulada
             if (key === 'id')
@@ -126,12 +126,15 @@ const Profile = () => {
     };
 
     return (
-        <View style={styles.background}>
+        <ScrollView style={styles.background}>
             <View style={styles.container}>
                 <Text style={styles.header}>Datos de su perfil:</Text>
                 {renderData(dataUser)}
-                <TouchableOpacity style={styles.myCooks} onPress={() => navigation.navigate('Cooks', { id: 1 })}>
+                <TouchableOpacity style={styles.myCooks} onPress={() => navigation.navigate('Cooks', { id: user.id })}>
                     <Text style={styles.buttonText}>Ver mis recetas</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.myCooks} onPress={() => navigation.navigate('FavouriteCooks', { id: user.id })}>
+                    <Text style={styles.buttonText}>Ver mis recetas favoritas</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.actions}>
@@ -230,7 +233,7 @@ const Profile = () => {
                     </View>
                 </View>
             </Modal>
-        </View>
+        </ScrollView>
     )
 }
 

@@ -44,6 +44,11 @@ public class UserController {
         return user.isPresent() ? ResponseEntity.ok(user) : ResponseEntity.status(HttpStatus.NOT_FOUND).body(user);
     }
 
+    @GetMapping("/{id}/favourites")
+    public List<Cook> getFavouriteCooks(@PathVariable Long id) {
+        return userService.getAllFavouriteCooks(id);
+    }
+
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody User user) {
         Optional<User> existing = userService.getUserByEmail(user.getEmail());

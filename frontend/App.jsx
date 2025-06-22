@@ -13,6 +13,7 @@ import Login from './Components/Login.jsx';
 import Signup from './Components/Signup.jsx';
 import Profile from './Components/Profile.jsx';
 import UpdateUser from './Components/UpdateUser.jsx';
+import FavouriteCooks from './Components/FavouriteCooks.jsx';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -50,6 +51,7 @@ const RootNavigator = () => {
               <Stack.Screen name="Main" component={MainMenu} />
               <Stack.Screen name="Feed" component={Feed} />
               <Stack.Screen name="Cooks" component={CooksScreen} />
+              <Stack.Screen name="FavouriteCooks" component={FavouriteCooks} />
               <Stack.Screen name="CookDetails" component={CookDetails} />
               <Stack.Screen name="AddUpdateCook" component={AddUpdateCook} />
               <Stack.Screen name="UpdateUser" component={UpdateUser} />

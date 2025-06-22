@@ -17,19 +17,31 @@ export const getCooksSortByRate = async (down) => {
   return data; // Devuelve los datos obtenidos de la API.
 }
 
-export const postCook = async (cook) => {
-  const response = await api.post('cooks/', cook);
+export const postCook = async (cook, token) => {
+  const response = await api.post('cooks/', cook, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return response.status;  // devuelve el código HTTP (por ejemplo, 201, 200, 400, etc)
 }
 
-export const updateCook = async (id, cook) => {
-  const response = await api.put(`cooks/${id}`, cook);
+export const updateCook = async (id, cook, token) => {
+  const response = await api.put(`cooks/${id}`, cook, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return response.status;  // devuelve el código HTTP (por ejemplo, 200, 400, etc)
 }
 
 export const deleteCook = async (id) => {
   try {
-    const response = await api.delete(`cooks/${id}`);
+    const response = await api.delete(`cooks/${id}`, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.status;
   } catch (error) {
     console.error('Error deleting cook:', error);
@@ -37,10 +49,15 @@ export const deleteCook = async (id) => {
   }
 }
 
-export const getCooksFromUser = async (id) => {
+export const getCooksFromUser = async (id, token) => {
   try {
-    const { data } = await api.get(`cooks/user/${id}`);
-    return data;
+    const res = await api.get(`cooks/user/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log("response-getCooksFromUser", res);
+    return res.data;
   } catch (error) {
     console.error('Error deleting cook:', error);
     throw error;
