@@ -10,22 +10,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const loadToken = async () => {
-      try {
-        const storedToken = await AsyncStorage.getItem('token');
-        setToken(storedToken); // <-- Mantén el token si existe
-      } catch (err) {
-        console.error('Error cargando token:', err);
-        setToken(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadToken();
-  }, []);
-
-  useEffect(() => {
     const loadAuth = async () => {
       const storedToken = await AsyncStorage.getItem('token');
       const storedUser = await AsyncStorage.getItem('user');

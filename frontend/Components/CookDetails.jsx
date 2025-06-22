@@ -4,10 +4,10 @@ import icon from '../assets/cook.png';
 import description from '../assets/description.png';
 import grocery from '../assets/grocery.png';
 import StarRating from './StarRating';
-import { postComment } from '../services/commentsService';
-import { getAllCommentsFromCook } from '../services/commentsService';
+import { postComment, getAllCommentsFromCook } from '../services/commentsService';
 import { useAuth } from '../Context/AuthContext';
-
+import Rate from './Rate';
+import { addToFavourite } from '../services/userService';
 
 const CookDetails = ({ route }) => {
     const { cook } = route.params;
@@ -15,7 +15,7 @@ const CookDetails = ({ route }) => {
     const [comment, setComment] = useState(false);
     const [comfy, setComfy] = useState(false);
     const { user } = useAuth();
-    const [username, setUsername] = useState('');
+    const { token } = useAuth();
 
     const dismissKeyboard = () => {
         setComfy(false)
@@ -40,7 +40,7 @@ const CookDetails = ({ route }) => {
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                const response = await getAllCommentsFromCook(cook.id);
+                const response = await getAllCommentsFromCook(cook.id, token);
                 if (response.status === 200) setComments(response.data);
                 else console.error('Error fetching comments:', response.status);
                 console.log('Comments fetched:', comments);
@@ -143,9 +143,20 @@ const CookDetails = ({ route }) => {
                     </View>
                 </View>
                 {comfy ? <View style={{ height: 150 }}></View> : <></>}
-                <TouchableOpacity style={styles.favourite} onPress={() => navigation.navigate('AddUpdateCook')}>
-                    <Text style={styles.textButton}><Text style={styles.star}>★</Text>Marcar como favorita</Text>
-                </TouchableOpacity>
+                <View>
+                    <Text style={[styles.titleAlt, { marginLeft: 60, marginBottom: 5 }]}>Puntúa esta receta</Text>
+                    <Rate />
+                </View>
+                <View>
+                    <TouchableOpacity style={[styles.button, styles.favourite]} onPress={
+                        () => {
+                            alert('Receta añadida a favoritos!');
+                            addToFavourite(user.id, cook.id, token);
+                        }
+                    }>
+                        <Text style={styles.textButton}><Text style={styles.star}>★</Text> Añadir a favoritos</Text>
+                    </TouchableOpacity>
+                </View>
             </ScrollView>
         </TouchableWithoutFeedback>
     );
@@ -158,11 +169,6 @@ const styles = StyleSheet.create({
         paddingTop: 80,
         paddingBottom: 110,
         backgroundColor: '#008AE1',
-    },
-    titleRate: {
-        flex: 1,
-        direction: 'row',
-        justifyContent: 'center'
     },
     title: {
         fontSize: 24,
@@ -221,6 +227,15 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: '#d6d15a',
     },
+    button: {
+        backgroundColor: '#000166',
+        paddingVertical: 5,
+        borderRadius: 8,
+        marginTop: 15,
+        alignItems: 'center',
+        width: 200,
+        marginLeft: 75,
+    }
 });
 
 export default CookDetails;

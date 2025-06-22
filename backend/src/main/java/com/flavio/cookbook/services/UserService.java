@@ -3,6 +3,8 @@ package com.flavio.cookbook.services;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.flavio.cookbook.models.Cook;
 import com.flavio.cookbook.models.User;
 import com.flavio.cookbook.repositories.UserRepository;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,11 @@ public class UserService {
     }
 
     public void updateUser(User user) {
+        userRepository.save(user);
+    }
+
+    public void addFavorite(User user, Cook cook){
+        user.getFavorites().add(cook);
         userRepository.save(user);
     }
 

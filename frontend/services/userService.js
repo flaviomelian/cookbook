@@ -1,20 +1,24 @@
 import api from './index'; // Se importa la instancia configurada de axios (api) para realizar las solicitudes HTTP.
 
-export const getUser = async (id) => {
-    const { data } = await api.get(`users/${id}`); // Realiza la solicitud GET a la API para obtener los usuarios.
+export const getUser = async (id, token) => {
+    const { data } = await api.get(`users/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }); // Realiza la solicitud GET a la API para obtener los usuarios.
     return data; // Devuelve los datos obtenidos de la API.
 }
 
 export const login = async (email, password) => {
     const res = await api.post(`users/login`, { email, password });
-    console.log("response", res);  
+    console.log("response", res);
     return res.data; // Devolver el token. 
 }
 
 export const signup = async (name, email, password, language, level) => {
-    const {data} = await api.post(`users/signup`, { name, email, password, language, level });
+    const { data } = await api.post(`users/signup`, { name, email, password, language, level });
     console.log("response", data);
-    return data 
+    return data
 }
 
 export const deleteUserAccount = async (id, token) => {
@@ -73,4 +77,15 @@ export const updateUser = async (id, name, email, password, language, level, tok
         }
     );
     return data; // Devuelve los datos actualizados del usuario.
+}
+
+export const addToFavourite = async (userId, cookId, token) => {
+    console.log("addToFavourite", userId, cookId, token);
+    const res = api.post(`users/${userId}/add-favourite/${cookId}`, {}, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    console.log("response", res.status);
+    return res.status; // Devuelve el código de estado HTTP (por ejemplo, 201, 200, 400, etc).
 }

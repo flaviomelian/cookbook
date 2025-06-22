@@ -36,7 +36,7 @@ const Profile = () => {
                     Alert.alert('Error', 'No se encontró el ID de usuario.');
                     return;
                 }
-                const data = await getUser(userId);
+                const data = await getUser(userId, token);
                 setDataUser(data);
             } catch (error) {
                 console.error('Error fetching user data:', error);

@@ -1,7 +1,7 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { AuthProvider } from './Context/AuthContext';
+import { AuthProvider, useAuth } from './Context/AuthContext.jsx';
 import NavBar from './Components/NavBar.jsx';
 import Home from './Components/Home.jsx';
 import Feed from './Components/Feed.jsx';
@@ -13,25 +13,10 @@ import Login from './Components/Login.jsx';
 import Signup from './Components/Signup.jsx';
 import Profile from './Components/Profile.jsx';
 import UpdateUser from './Components/UpdateUser.jsx';
-import { useAuth } from './Context/AuthContext.jsx';
 import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createNativeStackNavigator();
-
-export default function App() {
-  return (
-    <AuthProvider>
-      <NavigationContainer>
-        <View style={styles.container}>
-          <RootNavigator />
-        </View>
-      </NavigationContainer>
-    </AuthProvider>
-  );
-}
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
-// ...existing code...
 
 const RootNavigator = () => {
   const { token, loading } = useAuth();
@@ -40,16 +25,20 @@ const RootNavigator = () => {
   useEffect(() => {
     const checkFirstTime = async () => {
       const alreadyShown = await AsyncStorage.getItem('alreadyShownHome');
-      if (alreadyShown) setShowHome(false);
-      else setShowHome(true);
+      setShowHome(alreadyShown ? false : true);
     };
     if (!token) checkFirstTime();
     else setShowHome(false);
-    console.log('Token:', token);
-    console.log('Show Home:', showHome);
   }, [token]);
 
-  if (loading || showHome === null) return null;
+  // Mientras carga el token o showHome, muestra pantalla de carga
+  if (loading || showHome === null) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Cargando...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -58,7 +47,6 @@ const RootNavigator = () => {
           {token ? (
             // Pantallas autenticadas
             <>
-              <Stack.Screen name="Login" component={Login} />
               <Stack.Screen name="Main" component={MainMenu} />
               <Stack.Screen name="Feed" component={Feed} />
               <Stack.Screen name="Cooks" component={CooksScreen} />
@@ -70,26 +58,17 @@ const RootNavigator = () => {
           ) : showHome ? (
             // Primera vez: muestra Home
             <>
-              <Stack.Screen name="Home">
-                {props => (
-                  <Home
-                    {...props}
-                    onContinue={async () => {
-                      await AsyncStorage.setItem('alreadyShownHome', 'true');
-                      setShowHome(false);
-                    }}
-                  />
-                )}
-              </Stack.Screen>
+              <Stack.Screen name="Home" component={Home} />
               <Stack.Screen name="Login" component={Login} />
               <Stack.Screen name="Signup" component={Signup} />
+              <Stack.Screen name="Cooks" component={CooksScreen} />
             </>
           ) : (
             // Siguientes veces: directo a Login
             <>
+              <Stack.Screen name="Home" component={Home} />
               <Stack.Screen name="Login" component={Login} />
               <Stack.Screen name="Signup" component={Signup} />
-              <Stack.Screen name="Home" component={Home} />
             </>
           )}
         </Stack.Navigator>
@@ -98,6 +77,16 @@ const RootNavigator = () => {
     </View>
   );
 };
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <NavigationContainer>
+        <RootNavigator />
+      </NavigationContainer>
+    </AuthProvider>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {

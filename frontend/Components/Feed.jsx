@@ -3,16 +3,18 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { useNavigation } from '@react-navigation/native';
 import { getAllCooks } from '../services/cookService';
 import StarRating from './StarRating.jsx'
+import { useAuth } from '../Context/AuthContext';
 
 const Feed = () => {
 
     const navigation = useNavigation();
     const [cooks, setCooks] = useState([]);
+    const { token } = useAuth(); 
 
     useEffect(() => {
         const fetchCooks = async () => {
             try {
-                const data = await getAllCooks();
+                const data = await getAllCooks(token);
                 setCooks(data);
             } catch (error) {
                 console.error('Error fetching cooks:', error);

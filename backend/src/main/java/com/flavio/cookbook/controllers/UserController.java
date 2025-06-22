@@ -6,7 +6,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import com.flavio.cookbook.components.JwtUtil;
+import com.flavio.cookbook.models.Cook;
 import com.flavio.cookbook.models.User;
+import com.flavio.cookbook.services.CookService;
 import com.flavio.cookbook.services.UserService;
 
 import java.time.LocalDateTime;
@@ -20,11 +22,13 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
+    private final CookService cookService;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    public UserController(UserService userService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    public UserController(UserService userService, CookService cookService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.userService = userService;
+        this.cookService = cookService;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
     }
@@ -83,21 +87,36 @@ public class UserController {
         return ResponseEntity.ok(Map.of("valid", valid));
     }
 
+    @PostMapping("/{idUser}/add-favourite/{idCook}")
+    public ResponseEntity<String> addFavorite(@PathVariable Long idUser, @PathVariable Long idCook) {
+        System.out.println("Adding favorite: User ID = " + idUser + ", Cook ID = " + idCook);
+        Optional<User> userOpt = userService.getUserById(idUser);
+        Optional<Cook> cookOpt = cookService.getCookById(idCook);
+        if (userOpt.isEmpty() || cookOpt.isEmpty())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario o receta no encontrada");
+        User user = userOpt.get();
+        Cook cook = cookOpt.get();
+        if (user.getFavorites().contains(cook))
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("La receta ya está en favoritos");
+        userService.addFavorite(user, cook);
+        return ResponseEntity.ok("Receta añadida a favoritos");
+    }
+
     @PutMapping("/{id}")
-public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User user) {
-    Optional<User> userOpt = userService.getUserById(id);
-    if (userOpt.isEmpty()) 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
-    User existingUser = userOpt.get();
-    existingUser.setName(user.getName());
-    existingUser.setEmail(user.getEmail());
-    existingUser.setLanguage(user.getLanguage());
-    if (user.getPassword() != null && !user.getPassword().isEmpty()) 
-        existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
-    existingUser.setUpdatedAt(LocalDateTime.now());
-    userService.saveUser(existingUser);
-    return ResponseEntity.ok(existingUser);
-}
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User user) {
+        Optional<User> userOpt = userService.getUserById(id);
+        if (userOpt.isEmpty())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+        User existingUser = userOpt.get();
+        existingUser.setName(user.getName());
+        existingUser.setEmail(user.getEmail());
+        existingUser.setLanguage(user.getLanguage());
+        if (user.getPassword() != null && !user.getPassword().isEmpty())
+            existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        existingUser.setUpdatedAt(LocalDateTime.now());
+        userService.saveUser(existingUser);
+        return ResponseEntity.ok(existingUser);
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {

@@ -9,6 +9,7 @@ import downward from '../assets/arrow_downward.png';
 import rate from '../assets/rate.png'
 import update from '../assets/edit.png';
 import info from '../assets/info.png';
+import { useAuth } from '../Context/AuthContext';
 
 const Cooks = ({ userId }) => {
 
@@ -16,6 +17,7 @@ const Cooks = ({ userId }) => {
   const navigation = useNavigation();
   const [refresh, setRefresh] = useState(true);
   const [down, setDown] = useState(null);
+  const { token } = useAuth(); 
 
   useEffect(() => {
     const fetchCooks = async () => {
@@ -25,7 +27,7 @@ const Cooks = ({ userId }) => {
         if (userId && down !== null) data = await getRatedCooksFromUser(userId, down);
         else if (userId) data = await getCooksFromUser(userId);
         else if (down !== null) data = await getCooksSortByRate(down);
-        else data = await getAllCooks();
+        else data = await getAllCooks(token);
         setCooks(data);
       } catch (error) {
         console.error('Error fetching cooks:', error);

@@ -28,17 +28,33 @@ public class JwtUtil {
                 .setSubject(email)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1 día
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)  // usar Key + Alg
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256) // usar Key + Alg
                 .compact();
     }
 
     public String extractEmail(String token) {
         Claims claims = Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())  // Usar parserBuilder y Key
+                .setSigningKey(getSigningKey()) // Usar parserBuilder y Key
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-
+        System.out.println("Extracted email: " + claims.getSubject());
         return claims.getSubject();
     }
+
+    public boolean validateToken(String token, org.springframework.security.core.userdetails.UserDetails userDetails) {
+        final String email = extractEmail(token);
+        return (email.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    private boolean isTokenExpired(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        Date expiration = claims.getExpiration();
+        return expiration.before(new Date());
+    }
+
 }
