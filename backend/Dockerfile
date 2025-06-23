@@ -1,7 +1,7 @@
 # Etapa 1: Build con Maven y JDK 17
 FROM maven:3.8.5-openjdk-17 AS build
 
-WORKDIR /app
+WORKDIR /backend
 
 # Copiar solo pom.xml primero para cachear dependencias si no cambian
 COPY pom.xml .
@@ -18,10 +18,10 @@ RUN mvn clean package -DskipTests
 # Etapa 2: Imagen runtime ligera con solo JDK
 FROM openjdk:17-jdk-slim
 
-WORKDIR /app
+WORKDIR /backend
 
 # Copiar el jar construido en la etapa de build
-COPY --from=build /app/target/*.jar app.jar
+COPY --from=build /app/target/*.jar cookbook-0.0.1.jar
 
 # Exponer el puerto que usa Spring Boot (ajusta si es otro)
 EXPOSE 8080
