@@ -27,4 +27,4 @@ COPY --from=build /app/target/*.jar cookbook-0.0.1.jar
 EXPOSE 8080
 
 # Comando para ejecutar la app
-CMD ["java", "-jar", "cookbook-0.0.1.jar"]
+CMD ["java", "-jar", "target/cookbook-0.0.1.jar"]
